@@ -38,3 +38,18 @@ class {classname}
     }
 }
 ~
+F
+class {classnme}{
+
+    public static enum Option{
+        {options}
+    }
+
+    public static {parent} make{parent}(Option option){
+        switch(option){
+            {case}
+            default:
+                return null;
+        }
+    }
+}

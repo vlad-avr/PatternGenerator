@@ -8,7 +8,8 @@ public class SnippetLoader {
 
     public static enum PatternCode{
         SC,
-        STS
+        STS,
+        F
     }
 
     private static final String patternPath = "demo\\src\\main\\java\\com\\example\\Snippets\\PatternSnippets.txt";
@@ -23,6 +24,9 @@ public class SnippetLoader {
                 break;
             case STS:
                 res = readChunk(PatternCode.STS.toString(), "~", reader);
+                break;
+            case F:
+                res = readChunk(PatternCode.F.toString(), "~", reader);
                 break;        
             default:
                 break;

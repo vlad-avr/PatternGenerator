@@ -122,4 +122,17 @@ public class InputHandler {
         }
     }
 
+    public static Class<?> getClass(String prompt){
+        while (true) {
+            System.out.println(prompt);
+            try{
+                String input = getLine();
+                Class<?> c = Class.forName(input);
+                return c;
+            }catch(ClassNotFoundException e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
 }
