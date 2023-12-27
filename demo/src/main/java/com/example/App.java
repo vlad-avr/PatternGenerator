@@ -15,7 +15,7 @@ public final class App {
      */
     public static void main(String[] args) {
         try {
-            PatternFactory.makePatternSnippet(Pattern.SINGLETON);
+            PatternFactory.makePatternSnippet(Pattern.FACTORY);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

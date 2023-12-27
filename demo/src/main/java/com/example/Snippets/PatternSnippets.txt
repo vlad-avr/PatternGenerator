@@ -39,7 +39,7 @@ class {classname}
 }
 ~
 F
-class {classnme}{
+class {classname}{
 
     public static enum Option{
         {options}
@@ -53,3 +53,4 @@ class {classnme}{
         }
     }
 }
+~
