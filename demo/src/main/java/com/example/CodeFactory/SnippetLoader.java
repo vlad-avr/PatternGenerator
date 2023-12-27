@@ -33,13 +33,16 @@ public class SnippetLoader {
 
     private static String readChunk(String start, String end, BufferedReader reader) throws IOException{
         String res = "";
-        String line;
-        while((line = reader.readLine()) != null && line != start){
-            continue;
-        }
-        while((line = reader.readLine()) != null && line != end){
-            res += line + "\n";
-        }
+        String line = "";
+        do{
+            line = reader.readLine();
+        }while(!line.equals(start));
+        line = reader.readLine();
+        do{
+            res += line;
+            res += "\n";
+            line = reader.readLine();
+        }while(!line.equals(end));
         return res;
     }
     

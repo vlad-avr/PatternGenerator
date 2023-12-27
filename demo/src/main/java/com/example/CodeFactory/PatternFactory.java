@@ -36,7 +36,7 @@ public class PatternFactory {
             content = SnippetLoader.loadPatternSnippet(PatternCode.STS);
         }
         if(content != null && content != ""){
-            content.replaceAll("{classname}", path.getFileName().toString());
+            content = content.replaceAll("\\{classname\\}", getClassName(path));
             Files.write(path, content.getBytes());
         }else{
             System.out.println("Unable to perform operation");
@@ -46,6 +46,16 @@ public class PatternFactory {
     private static Path getPath() {
         Path path = InputHandler.getFilePath("Enter valid file path: ");
         return path;
+    }
+
+    private static String getClassName(Path path){
+        String name = path.getFileName().toString();
+        int ind = name.lastIndexOf('.');
+        if(ind > 0){
+            return name.substring(0, ind);
+        }else{
+            return null;
+        }
     }
 
 
