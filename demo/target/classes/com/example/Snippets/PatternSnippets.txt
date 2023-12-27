@@ -42,12 +42,12 @@ F
 class {classname}{
 
     public static enum Option{
-        {options}
+{options}
     }
 
     public static {parent} make{parent}(Option option){
         switch(option){
-            {case}
+{case}
             default:
                 return null;
         }

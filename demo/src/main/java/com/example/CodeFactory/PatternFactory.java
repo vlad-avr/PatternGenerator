@@ -30,46 +30,56 @@ public class PatternFactory {
         }
     }
 
-    private static void makeSingleton() throws IOException{
+    private static void makeSingleton() throws IOException {
         Path path = getPath();
         String content;
-        if(InputHandler.getBool("Enter '+' if you want a classic implementation or '-' for thread safe implementation: ")){
+        if (InputHandler
+                .getBool("Enter '+' if you want a classic implementation or '-' for thread safe implementation: ")) {
             content = SnippetLoader.loadPatternSnippet(PatternCode.SC);
-        }else{
+        } else {
             content = SnippetLoader.loadPatternSnippet(PatternCode.STS);
         }
-        if(content != null && content != ""){
-            content = content.replaceAll("\\{classname\\}", getClassName(path));
+        if (content != null && content != "") {
+            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path));
             Files.write(path, content.getBytes());
-        }else{
+        } else {
             System.out.println("Unable to load pattern snippet");
         }
     }
 
-    private static void makeFactory() throws IOException{
+    private static void makeFactory() throws IOException {
         Path path = getPath();
         String content = SnippetLoader.loadPatternSnippet(PatternCode.F);
-        if(InputHandler.getBool("Enter '+' to create raw factory or '-' to create customised factory" )){
-            content = content.replaceAll("\\{classname\\}", getClassName(path)).replaceAll("\\{options\\}", "").replaceAll("\\{parent\\}", "Object").replaceAll("\\{case\\}", "");
-        }else{
+        if (InputHandler.getBool("Enter '+' to create raw factory or '-' to create customised factory")) {
+            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path))
+                    .replaceAll("\\{options\\}", "").replaceAll("\\{parent\\}", "Object").replaceAll("\\{case\\}", "");
+        } else {
             System.out.println("Select classes from your environment that you want to produce from this factory");
             List<Class<?>> classes = new ArrayList<>();
-            do{
+            do {
                 classes.add(InputHandler.getClass("Enter legal class name: "));
-            }while(InputHandler.getBool("Do you want to add other classes to factory? (+ or -):"));
+            } while (InputHandler.getBool("Do you want to add other classes to factory? (+ or -):"));
             Class<?> parentClass = findCommonParent(classes);
-            if(parentClass == null){
+            if (parentClass == null) {
                 System.out.println("No common parent class found for selected classes!");
                 return;
             }
             List<String> options = new ArrayList<>();
             String enumOptions = "";
-            for(Class<?> c : classes){
-                String str = c.getName().toUpperCase(); 
+            for (Class<?> c : classes) {
+                String str = getClassNameFromClassPath(c.getName()).toUpperCase();
                 options.add(str);
-                enumOptions += str + ",\n";
+                enumOptions += "\t\t" + str + ",\n";
             }
-            content = content.replaceAll("\\{classname\\}", getClassName(path)).replaceAll("\\{options\\}", enumOptions).replaceAll("\\{parent\\}", parentClass.getName());
+            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path))
+                    .replaceAll("\\{options\\}", enumOptions)
+                    .replaceAll("\\{parent\\}", getClassNameFromClassPath(parentClass.getName()));
+            String cases = "";
+            for (int i = 0; i < classes.size(); i++) {
+                cases += "\t\t\tcase " + options.get(i) + ":\n\t\t\t\treturn new "
+                        + getClassNameFromClassPath(classes.get(i).getName()) + "();\n";
+            }
+            content = content.replaceAll("\\{case\\}", cases);
         }
         Files.write(path, content.getBytes());
     }
@@ -100,15 +110,23 @@ public class PatternFactory {
         return path;
     }
 
-    private static String getClassName(Path path){
+    private static String getClassNameFromFilePath(Path path) {
         String name = path.getFileName().toString();
         int ind = name.lastIndexOf('.');
-        if(ind > 0){
+        if (ind > 0) {
             return name.substring(0, ind);
-        }else{
+        } else {
             return null;
         }
     }
 
+    private static String getClassNameFromClassPath(String classPath) {
+        int ind = classPath.lastIndexOf('.');
+        if (ind > 0) {
+            return classPath.substring(ind+1);
+        } else {
+            return null;
+        }
+    }
 
 }
