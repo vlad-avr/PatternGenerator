@@ -111,7 +111,7 @@ public class InputHandler {
             try {
                 String input = getString("Enter filePath: ");
                 Path path = Paths.get(input);
-                if(!isValidFilePath(path)){
+                if(Files.exists(path)){
                     System.out.println(path.toAbsolutePath() + " is an Invalid path!");
                     continue;
                 }
@@ -122,7 +122,4 @@ public class InputHandler {
         }
     }
 
-    private static boolean isValidFilePath(Path filePath) {
-        return Files.notExists(filePath.getParent()) && Files.isWritable(filePath.getParent());
-    }
 }

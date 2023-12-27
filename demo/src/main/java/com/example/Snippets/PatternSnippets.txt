@@ -1,27 +1,27 @@
-CLASSIC
-class Singleton
+SC
+class {classname}
 {
     //Change obj type according to your needs
     private static Object obj;
  
-    private Singleton() {}
+    private {classname}() {}
  
-    public static Singleton getInstance()
+    public static Object getInstance()
     {
         if (obj==null)
-            obj = new Singleton();
+            obj = new Object();
         return obj;
     }
 }
-
-THREADSAFE
-class Singleton
+~
+STS
+class {classname}
 {
     //Change obj type according to your needs
     private static volatile Object obj  = null;
-    private Singleton() {}
+    private {classname}() {}
     
-    public static Singleton getInstance()
+    public static Object getInstance()
     {
         if (obj == null)
         {
@@ -31,9 +31,10 @@ class Singleton
                 // check again as multiple threads
                 // can reach above step
                 if (obj==null)
-                    obj = new Singleton();
+                    obj = new Object();
             }
         }
         return obj;
     }
 }
+~
