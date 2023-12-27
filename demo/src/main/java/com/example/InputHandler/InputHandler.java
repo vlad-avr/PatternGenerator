@@ -1,5 +1,9 @@
 package com.example.InputHandler;
 
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,20 +52,21 @@ public class InputHandler {
     }
 
     // public LocalDate getDate(String prompt) {
-    //     while (true) {
-    //         System.out.println(prompt);
-    //         try {
-    //             String input = getLine();
-    //             LocalDate date = LocalDate.parse(input);
-    //             if (date.isAfter(LocalDate.now())) {
-    //                 Exception e = new Exception("This date is from the Future! Enter a valid date");
-    //                 throw e;
-    //             }
-    //             return date;
-    //         } catch (Exception e) {
-    //             System.out.println(e.getMessage());
-    //         }
-    //     }
+    // while (true) {
+    // System.out.println(prompt);
+    // try {
+    // String input = getLine();
+    // LocalDate date = LocalDate.parse(input);
+    // if (date.isAfter(LocalDate.now())) {
+    // Exception e = new Exception("This date is from the Future! Enter a valid
+    // date");
+    // throw e;
+    // }
+    // return date;
+    // } catch (Exception e) {
+    // System.out.println(e.getMessage());
+    // }
+    // }
     // }
 
     public static double getDouble(String prompt, double lowerBound, double upperBound) {
@@ -71,7 +76,8 @@ public class InputHandler {
                 String input = getLine();
                 double res = Double.parseDouble(input);
                 if (res < lowerBound || res > upperBound) {
-                    NumberFormatException e = new NumberFormatException("Value must be in range ["+ lowerBound +" , " + upperBound + "]!");
+                    NumberFormatException e = new NumberFormatException(
+                            "Value must be in range [" + lowerBound + " , " + upperBound + "]!");
                     throw e;
                 }
                 return res;
@@ -97,5 +103,26 @@ public class InputHandler {
                 System.out.println(e.getMessage());
             }
         }
+    }
+
+    public static Path getFilePath(String prompt) {
+        while (true) {
+            System.out.println(prompt);
+            try {
+                String input = getString("Enter filePath: ");
+                Path path = Paths.get(input);
+                if(!isValidFilePath(path)){
+                    System.out.println(path.toAbsolutePath() + " is an Invalid path!");
+                    continue;
+                }
+                return path;
+            } catch (InvalidPathException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private static boolean isValidFilePath(Path filePath) {
+        return Files.notExists(filePath.getParent()) && Files.isWritable(filePath.getParent());
     }
 }

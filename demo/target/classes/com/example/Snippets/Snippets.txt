@@ -1,0 +1,39 @@
+CLASSIC
+class Singleton
+{
+    //Change obj type according to your needs
+    private static Object obj;
+ 
+    private Singleton() {}
+ 
+    public static Singleton getInstance()
+    {
+        if (obj==null)
+            obj = new Singleton();
+        return obj;
+    }
+}
+
+THREADSAFE
+class Singleton
+{
+    //Change obj type according to your needs
+    private static volatile Object obj  = null;
+    private Singleton() {}
+    
+    public static Singleton getInstance()
+    {
+        if (obj == null)
+        {
+            // To make thread safe
+            synchronized (Singleton.class)
+            {
+                // check again as multiple threads
+                // can reach above step
+                if (obj==null)
+                    obj = new Singleton();
+            }
+        }
+        return obj;
+    }
+}
