@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Scanner;
 
 public class InputHandler {
-    private Scanner scanner = new Scanner(System.in);
+    private static Scanner scanner = new Scanner(System.in);
 
-    private String getLine() {
+    private static String getLine() {
         String input;
         do {
             input = scanner.nextLine();
@@ -14,12 +14,12 @@ public class InputHandler {
         return input;
     }
 
-    public String getString(String prompt) {
+    public static String getString(String prompt) {
         System.out.println(prompt);
         return getLine();
     }
 
-    public boolean getBool(String prompt) {
+    public static boolean getBool(String prompt) {
         while (true) {
             System.out.println(prompt);
             String input = getLine();
@@ -33,7 +33,7 @@ public class InputHandler {
         }
     }
 
-    public String getOption(List<String> options, String prompt) {
+    public static String getOption(List<String> options, String prompt) {
         while (true) {
             System.out.println(prompt);
             System.out.println("Available options : \n");
@@ -64,7 +64,7 @@ public class InputHandler {
     //     }
     // }
 
-    public double getDouble(String prompt, double lowerBound, double upperBound) {
+    public static double getDouble(String prompt, double lowerBound, double upperBound) {
         while (true) {
             System.out.println(prompt);
             try {
@@ -81,7 +81,7 @@ public class InputHandler {
         }
     }
 
-    public int getInt(String prompt, int lowerBound, int upperBound) {
+    public static int getInt(String prompt, int lowerBound, int upperBound) {
         while (true) {
             System.out.println(prompt);
             try {
