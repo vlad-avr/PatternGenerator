@@ -1,10 +1,5 @@
 package com.example;
 
-import java.io.IOException;
-
-import com.example.CodeFactory.PatternFactory;
-import com.example.CodeFactory.PatternFactory.Pattern;
-
 public final class App {
     private App() {
     }
@@ -14,11 +9,6 @@ public final class App {
      * @param args The arguments of the program.
      */
     public static void main(String[] args) {
-        try {
-            PatternFactory.makePatternSnippet(Pattern.FACTORY);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        System.out.println("RUNTIME TIME!");
     }
 }
