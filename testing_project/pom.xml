@@ -103,9 +103,13 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
-            <annotationProcessors>
-                <annotationProcessor>com.example.annotationProcessor.AnnotationProcessor</annotationProcessor>
-            </annotationProcessors>
+            <annotationProcessorPaths>
+              <path>
+                <groupId>com.example</groupId>
+                <artifactId>custom-annotation-processor</artifactId>
+                <version>1.0-SNAPSHOT</version>
+              </path>
+            </annotationProcessorPaths>
         </configuration>
       </plugin>
       <!-- <plugin>

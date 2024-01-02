@@ -1,9 +1,5 @@
 package com.example.annotationProcessor;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -19,30 +15,23 @@ import com.example.annotations.Singleton;
 @SupportedAnnotationTypes({"com.example.Annotations.Singleton", "com.example.Annotations.Factory"})
 public class AnnotationProcessor extends AbstractProcessor{
 
-    @Override
+@Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Path path = Paths.get("D:\\Java\\PatternGenerator\\testing_project\\src\\main\\java\\com\\example\\dummy");
-        String content = "";
         for (Element element : roundEnv.getElementsAnnotatedWith(Singleton.class)) {
             // Process elements annotated with @Singleton
-            content += "\nFound class annotated with @Singleton: " + element;
+            System.out.println("Found class annotated with @Singleton: " + element);
         }
 
         for (Element element : roundEnv.getElementsAnnotatedWith(Factory.class)) {
             // Process elements annotated with @Factory
-            content += "\nFound class annotated with @Factory: " + element;
+            System.out.println("Found class annotated with @Factory: " + element);
         }
-        try {
-            Files.write(path, content.getBytes());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
         return true;
     }
 
