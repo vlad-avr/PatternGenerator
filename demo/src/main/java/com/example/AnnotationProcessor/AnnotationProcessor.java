@@ -14,7 +14,7 @@ public class AnnotationProcessor extends AbstractProcessor{
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        System.out.println("COMPILE TIME!");
+        System.out.println("\n\n\nCOMPILE TIME!\n\n\n\n");
         for (TypeElement annotation : annotations) {
             for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
                 // Process the annotated elements
