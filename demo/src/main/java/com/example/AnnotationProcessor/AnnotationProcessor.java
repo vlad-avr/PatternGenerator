@@ -12,7 +12,7 @@ import javax.lang.model.element.TypeElement;
 import com.example.annotations.Factory;
 import com.example.annotations.Singleton;
 
-@SupportedAnnotationTypes({"com.example.Annotations.Singleton", "com.example.Annotations.Factory"})
+@SupportedAnnotationTypes({"com.example.annotations.Singleton", "com.example.annotations.Factory"})
 public class AnnotationProcessor extends AbstractProcessor{
 
 @Override
@@ -22,6 +22,7 @@ public class AnnotationProcessor extends AbstractProcessor{
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        System.out.println("\nPROCESSOR WORKING!");
         for (Element element : roundEnv.getElementsAnnotatedWith(Singleton.class)) {
             // Process elements annotated with @Singleton
             System.out.println("Found class annotated with @Singleton: " + element);
