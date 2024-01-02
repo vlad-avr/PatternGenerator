@@ -43,9 +43,13 @@
         <configuration>
             <source>1.8</source>
             <target>1.8</target>
-            <annotationProcessors>
-                <annotationProcessor>com.example.AnnotationProcessor.AnnotationProcessor</annotationProcessor>
-            </annotationProcessors>
+            <annotationProcessorPaths>
+              <path>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+              </path>
+            </annotationProcessorPaths>
         </configuration>
       </plugin>
       <plugin>
@@ -68,23 +72,11 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!-- <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven-checkstyle-plugin.version}</version>
         <dependencies>
-          <dependency>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>3.8.1</version>
-            <scope>compile</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>3.8.1</version>
-            <scope>compile</scope>
-          </dependency>
           <dependency>
             <groupId>com.puppycrawl.tools</groupId>
             <artifactId>checkstyle</artifactId>
@@ -110,7 +102,7 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
+      </plugin> -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>

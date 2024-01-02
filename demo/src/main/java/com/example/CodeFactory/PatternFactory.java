@@ -1,4 +1,4 @@
-package com.example.CodeFactory;
+package com.example.codeFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,8 +6,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.CodeFactory.SnippetLoader.PatternCode;
-import com.example.InputHandler.InputHandler;
+import com.example.codeFactory.SnippetLoader.PatternCode;
+import com.example.inputHandler.InputHandler;
 
 public class PatternFactory {
 

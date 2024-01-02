@@ -1,4 +1,4 @@
-package com.example.CodeFactory;
+package com.example.codeFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

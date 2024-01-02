@@ -1,4 +1,4 @@
-package com.example.AnnotationProcessor;
+package com.example.annotationProcessor;
 
 import java.util.Set;
 
@@ -8,7 +8,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
-@SupportedAnnotationTypes({"Singleton", "Factory"})
+@SupportedAnnotationTypes({"com.example.Annotations.Singleton", "com.example.Annotations.Factory"})
 public class AnnotationProcessor extends AbstractProcessor{
 
 

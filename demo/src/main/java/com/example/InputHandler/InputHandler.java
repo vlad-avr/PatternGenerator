@@ -1,4 +1,4 @@
-package com.example.InputHandler;
+package com.example.inputHandler;
 
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;

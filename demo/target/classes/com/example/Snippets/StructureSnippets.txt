@@ -1,5 +1,0 @@
-C{access} class {name}{}~
-I{access} interface {name}{}~
-M{access} {static} {return} {name}({args}){}~
-V{access} {static} {final} {type} {name};~
-E{access} {static} enum {name}{};~ 
