@@ -32,12 +32,7 @@ public class PatternFactory {
     private static void makeSingleton() throws IOException {
         Path path = getPath();
         String content;
-        if (InputHandler
-                .getBool("Enter '+' if you want a classic implementation or '-' for thread safe implementation: ")) {
-            content = SnippetLoader.loadPatternSnippet(PatternCode.SC);
-        } else {
-            content = SnippetLoader.loadPatternSnippet(PatternCode.STS);
-        }
+        content = SnippetLoader.loadPatternSnippet(PatternCode.SC);
         if (content != null && content != "") {
             content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path));
             Files.write(path, content.getBytes());

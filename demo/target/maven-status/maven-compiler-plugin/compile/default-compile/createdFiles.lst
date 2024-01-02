@@ -4,7 +4,6 @@ com\example\inputHandler\InputHandler.class
 com\example\codeFactory\PatternFactory$1.class
 com\example\codeFactory\SnippetLoader.class
 com\example\codeFactory\SnippetLoader$1.class
-com\example\App.class
 com\example\annotations\Singleton.class
 com\example\codeFactory\PatternFactory.class
 com\example\annotationProcessor\AnnotationProcessor.class
