@@ -1,21 +1,29 @@
 package com.example.annotationProcessor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 
 import com.example.annotations.Factory;
 import com.example.annotations.Singleton;
 
-@SupportedAnnotationTypes({"com.example.annotations.Singleton", "com.example.annotations.Factory"})
-public class AnnotationProcessor extends AbstractProcessor{
+public class AnnotationProcessor extends AbstractProcessor {
 
-@Override
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> annotations = new HashSet<>();
+        annotations.add("com.example.annotations.Singleton");
+        annotations.add("com.example.annotations.Factory");
+        // Add more annotation types as needed
+        return annotations;
+    }
+
+    @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
     }
