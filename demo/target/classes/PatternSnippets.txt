@@ -1,37 +1,37 @@
 SC
-class {classname}
+{path}
+class {singleton}
 {
-    //Change obj type according to your needs
-    private static Object obj;
+    private static {class} obj;
  
-    private {classname}() {}
+    private {singleton}() {}
  
-    public static Object getInstance()
+    public static {class} getInstance()
     {
         if (obj==null)
-            obj = new Object();
+            obj = new {class}();
         return obj;
     }
 }
 ~
 STS
-class {classname}
+{path}
+class {singleton}
 {
-    //Change obj type according to your needs
-    private static volatile Object obj  = null;
-    private {classname}() {}
+    private static volatile {class} obj  = null;
+    private {singleton}() {}
     
-    public static Object getInstance()
+    public static {class} getInstance()
     {
         if (obj == null)
         {
             // To make thread safe
-            synchronized ({classname}.class)
+            synchronized ({singleton}.class)
             {
                 // check again as multiple threads
                 // can reach above step
                 if (obj==null)
-                    obj = new Object();
+                    obj = new {class}();
             }
         }
         return obj;

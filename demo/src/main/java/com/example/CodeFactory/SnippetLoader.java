@@ -12,8 +12,8 @@ public class SnippetLoader {
         F
     }
 
-    private static final String patternPath = "demo\\src\\main\\java\\com\\example\\Snippets\\PatternSnippets.txt";
-    private static final String structPath = "demo\\src\\main\\java\\com\\example\\Snippets\\StructureSnippets.txt";
+    private static final String patternPath = "PatternSnippets.txt";
+    private static final String structPath = "StructureSnippets.txt";
 
     public static String loadPatternSnippet(PatternCode code) throws IOException{
         BufferedReader reader = new BufferedReader(new FileReader(patternPath));

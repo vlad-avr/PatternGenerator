@@ -1,0 +1,56 @@
+SC
+{path}
+class {singleton}
+{
+    private static {class} obj;
+ 
+    private {singleton}() {}
+ 
+    public static {class} getInstance()
+    {
+        if (obj==null)
+            obj = new {class}();
+        return obj;
+    }
+}
+~
+STS
+{path}
+class {singleton}
+{
+    private static volatile {class} obj  = null;
+    private {singleton}() {}
+    
+    public static {class} getInstance()
+    {
+        if (obj == null)
+        {
+            // To make thread safe
+            synchronized ({singleton}.class)
+            {
+                // check again as multiple threads
+                // can reach above step
+                if (obj==null)
+                    obj = new {class}();
+            }
+        }
+        return obj;
+    }
+}
+~
+F
+class {classname}{
+
+    public static enum Option{
+{options}
+    }
+
+    public static {parent} make{parent}(Option option){
+        switch(option){
+{case}
+            default:
+                return null;
+        }
+    }
+}
+~

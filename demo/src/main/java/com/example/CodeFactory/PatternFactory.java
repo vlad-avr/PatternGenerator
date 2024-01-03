@@ -1,43 +1,58 @@
 package com.example.codeFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.lang.model.element.PackageElement;
+import javax.lang.model.element.TypeElement;
 
 import com.example.codeFactory.SnippetLoader.PatternCode;
 import com.example.inputHandler.InputHandler;
 
 public class PatternFactory {
 
-    public static enum Pattern {
-        SINGLETON,
-        FACTORY
-    };
+    public static void makeSingleton(TypeElement clazz, boolean threadSafe) {
+        PackageElement pkg = (PackageElement)clazz.getEnclosingElement();
+        String packageName = pkg.getQualifiedName().toString();
+        String filePath = packageName.replace('.', '/');
+        File file = new File("src/main/java/" + filePath + "/" + clazz.getSimpleName() + "Singleton.java");
+        try {
+            if (file.getParentFile().mkdirs()) {
+                System.out.println("Directory created: " + file.getParentFile());
+            }
 
-    public static void makePatternSnippet(Pattern pattern) throws IOException {
-        switch (pattern) {
-            case SINGLETON:
-                makeSingleton();
-                break;
-            case FACTORY:
-                makeFactory();
-                break;
-            default:
-                return;
-        }
-    }
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getAbsolutePath());
+                String content;
+                if (threadSafe) {
+                    content = SnippetLoader.loadPatternSnippet(PatternCode.SC);
+                } else {
+                    content = SnippetLoader.loadPatternSnippet(PatternCode.STS);
+                }
+                if (content != null && content.equals("")) {
+                    System.out.println("Singleton code snippet loaded successfully!");
+                } else {
+                    System.out.println("Singleton code snippet could not be loaded");
+                    return;
+                }
+                content.replaceAll("\\{class\\}", clazz.getSimpleName().toString())
+                        .replaceAll("\\{singleton\\}", clazz.getSimpleName() + "Singleton")
+                        .replaceAll("\\{path\\}", "package " + packageName);
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.println(content);
+                }
 
-    private static void makeSingleton() throws IOException {
-        Path path = getPath();
-        String content;
-        content = SnippetLoader.loadPatternSnippet(PatternCode.SC);
-        if (content != null && content != "") {
-            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path));
-            Files.write(path, content.getBytes());
-        } else {
-            System.out.println("Unable to load pattern snippet");
+                System.out.println("Content written to the file.");
+            } else {
+                System.out.println(file.getAbsolutePath() + " already exists.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -117,7 +132,7 @@ public class PatternFactory {
     private static String getClassNameFromClassPath(String classPath) {
         int ind = classPath.lastIndexOf('.');
         if (ind > 0) {
-            return classPath.substring(ind+1);
+            return classPath.substring(ind + 1);
         } else {
             return null;
         }
