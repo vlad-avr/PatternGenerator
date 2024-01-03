@@ -56,7 +56,10 @@ public class PatternFactory {
     }
 
     public static void makeFactory(TypeElement parent, List<TypeElement> children) {
-        PackageElement pkg = (PackageElement) parent.getEnclosingElement();
+        if(children == null || children.size() == 0){
+            return;
+        }
+        PackageElement pkg = (PackageElement) children.get(0).getEnclosingElement();
         String packageName = pkg.getQualifiedName().toString();
         String filePath = packageName.replace('.', '/');
         File file = new File("src/main/java/" + filePath + "/" + parent.getSimpleName() + "Factory.java");

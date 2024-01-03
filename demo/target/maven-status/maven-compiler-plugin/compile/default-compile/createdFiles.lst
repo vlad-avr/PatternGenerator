@@ -4,6 +4,5 @@ com\example\codeFactory\SnippetLoader.class
 com\example\codeFactory\SnippetLoader$1.class
 com\example\annotations\Singleton.class
 com\example\codeFactory\PatternFactory.class
-com\example\utility\CommonParentFinder.class
 com\example\annotationProcessor\AnnotationProcessor.class
 com\example\codeFactory\SnippetLoader$PatternCode.class
