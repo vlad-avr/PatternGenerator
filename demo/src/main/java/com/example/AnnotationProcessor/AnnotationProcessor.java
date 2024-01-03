@@ -102,8 +102,6 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     private List<TypeMirror> getCommonParent(List<TypeMirror> curParentTree, TypeMirror el2){
         List<TypeMirror> otherClassTree = getParentTree(el2);
-        System.out.println("CUR :\n" + curParentTree);
-        System.out.println("OTHER :\n" + otherClassTree);
         for(int i = 0; i < curParentTree.size(); i++){
             for(int j = 0; j < otherClassTree.size(); j++){
                 if(curParentTree.get(i).equals(otherClassTree.get(j))){
@@ -111,7 +109,6 @@ public class AnnotationProcessor extends AbstractProcessor {
                 }
             }
         }
-        System.out.println("DID NOT FIND");
         return Arrays.asList(processingEnv.getElementUtils().getTypeElement(Object.class.getName()).asType());
     }
 

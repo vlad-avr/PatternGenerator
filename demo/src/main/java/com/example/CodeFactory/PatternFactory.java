@@ -3,7 +3,6 @@ package com.example.codeFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,6 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
 import com.example.codeFactory.SnippetLoader.PatternCode;
-import com.example.inputHandler.InputHandler;
 
 public class PatternFactory {
 
@@ -109,49 +107,5 @@ public class PatternFactory {
         }
     }
 
-    private static Class<?> findCommonParent(List<Class<?>> classList) {
-        if (classList == null || classList.isEmpty()) {
-            return null;
-        }
-
-        Class<?> commonParent = classList.get(0);
-
-        for (int i = 1; i < classList.size(); i++) {
-            commonParent = findCommonParent(commonParent, classList.get(i));
-        }
-
-        return commonParent;
-    }
-
-    private static Class<?> findCommonParent(Class<?> class1, Class<?> class2) {
-        while (class1 != null && !class1.isAssignableFrom(class2)) {
-            class1 = class1.getSuperclass();
-        }
-        return class1;
-    }
-
-    private static Path getPath() {
-        Path path = InputHandler.getFilePath("Enter valid file path: ");
-        return path;
-    }
-
-    private static String getClassNameFromFilePath(Path path) {
-        String name = path.getFileName().toString();
-        int ind = name.lastIndexOf('.');
-        if (ind > 0) {
-            return name.substring(0, ind);
-        } else {
-            return null;
-        }
-    }
-
-    private static String getClassNameFromClassPath(String classPath) {
-        int ind = classPath.lastIndexOf('.');
-        if (ind > 0) {
-            return classPath.substring(ind + 1);
-        } else {
-            return null;
-        }
-    }
 
 }
