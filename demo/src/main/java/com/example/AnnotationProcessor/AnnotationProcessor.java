@@ -1,6 +1,5 @@
 package com.example.annotationProcessor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,15 +14,10 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.util.Elements;
-import javax.lang.model.util.Types;
-import javax.sound.sampled.AudioFileFormat.Type;
 
 import com.example.annotations.Factory;
 import com.example.annotations.Singleton;
 import com.example.codeFactory.PatternFactory;
-import com.example.utility.CommonParentFinder;
-
 
 public class AnnotationProcessor extends AbstractProcessor {
 
@@ -115,12 +109,12 @@ public class AnnotationProcessor extends AbstractProcessor {
         List<TypeMirror> otherClassTree = getParentTree(el2);
         for(int i = 0; i < curParentTree.size(); i++){
             for(int j = 0; j < otherClassTree.size(); j++){
-                if(curParentTree.get(i).toString().equals(otherClassTree.get(j).toString())){
+                if(curParentTree.get(i).equals(otherClassTree.get(j))){
                     return curParentTree.subList(i, curParentTree.size()-1);
                 }
             }
         }
-        System.out.println("FUCK");
+        System.out.println("DID NOT FIND");
         return Arrays.asList(processingEnv.getElementUtils().getTypeElement(Object.class.getName()).asType());
     }
 
