@@ -39,7 +39,8 @@ class {singleton}
 }
 ~
 F
-class {classname}{
+{path}
+class {factory}{
 
     public static enum Option{
 {options}
