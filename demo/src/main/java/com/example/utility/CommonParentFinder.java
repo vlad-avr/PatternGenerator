@@ -39,13 +39,36 @@ public class CommonParentFinder {
     }
 
     private javax.lang.model.type.TypeMirror findCommonParent(javax.lang.model.type.TypeMirror type1, javax.lang.model.type.TypeMirror type2) {
-        while (!types.isSameType(type1, type2)) {
-            if (types.isSubtype(type1, type2)) {
-                type1 = types.asElement(type1).asType();  // Move up in the hierarchy
-            } else {
-                type2 = types.asElement(type2).asType();  // Move up in the hierarchy
+        // Get the erasure of the types to handle generics
+        javax.lang.model.type.TypeMirror erasure1 = types.erasure(type1);
+        javax.lang.model.type.TypeMirror erasure2 = types.erasure(type2);
+    
+        // Find the common ancestor of the erasures
+        javax.lang.model.type.TypeMirror commonAncestor = findCommonAncestor(erasure1, erasure2);
+    
+        // Return the common ancestor
+        return commonAncestor;
+    }
+    
+    private javax.lang.model.type.TypeMirror findCommonAncestor(javax.lang.model.type.TypeMirror type1, javax.lang.model.type.TypeMirror type2) {
+        if (types.isSameType(type1, type2)) {
+            return type1;
+        }
+    
+        // Get the direct supertypes of each type
+        List<? extends javax.lang.model.type.TypeMirror> supertypes1 = types.directSupertypes(type1);
+        List<? extends javax.lang.model.type.TypeMirror> supertypes2 = types.directSupertypes(type2);
+    
+        // Recursively find the common ancestor in the supertypes
+        for (javax.lang.model.type.TypeMirror supertype1 : supertypes1) {
+            for (javax.lang.model.type.TypeMirror supertype2 : supertypes2) {
+                javax.lang.model.type.TypeMirror commonAncestor = findCommonAncestor(supertype1, supertype2);
+                if (commonAncestor != null) {
+                    return commonAncestor;
+                }
             }
         }
-        return type1;  // type1 and type2 are now the same (common parent)
+    
+        return null; // No common ancestor found
     }
 }

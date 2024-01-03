@@ -85,7 +85,8 @@ public class PatternFactory {
                 }
                 content = content.replaceAll("\\{factory\\}", parent.getSimpleName() + "Factory")
                         .replaceAll("\\{options\\}", enumOptions)
-                        .replaceAll("\\{parent\\}", parent.getSimpleName().toString());
+                        .replaceAll("\\{parent\\}", parent.getSimpleName().toString())
+                        .replaceAll("\\{path\\}", "package " + packageName);
 
                 String cases = "";
                 for (int i = 0; i < children.size(); i++) {
@@ -104,43 +105,6 @@ public class PatternFactory {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private static void makeFactory() throws IOException {
-        Path path = getPath();
-        String content = SnippetLoader.loadPatternSnippet(PatternCode.F);
-        if (InputHandler.getBool("Enter '+' to create raw factory or '-' to create customised factory")) {
-            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path))
-                    .replaceAll("\\{options\\}", "").replaceAll("\\{parent\\}", "Object").replaceAll("\\{case\\}", "");
-        } else {
-            System.out.println("Select classes from your environment that you want to produce from this factory");
-            List<Class<?>> classes = new ArrayList<>();
-            do {
-                classes.add(InputHandler.getClass("Enter legal class name: "));
-            } while (InputHandler.getBool("Do you want to add other classes to factory? (+ or -):"));
-            Class<?> parentClass = findCommonParent(classes);
-            if (parentClass == null) {
-                System.out.println("No common parent class found for selected classes!");
-                return;
-            }
-            List<String> options = new ArrayList<>();
-            String enumOptions = "";
-            for (Class<?> c : classes) {
-                String str = getClassNameFromClassPath(c.getName()).toUpperCase();
-                options.add(str);
-                enumOptions += "\t\t" + str + ",\n";
-            }
-            content = content.replaceAll("\\{classname\\}", getClassNameFromFilePath(path))
-                    .replaceAll("\\{options\\}", enumOptions)
-                    .replaceAll("\\{parent\\}", getClassNameFromClassPath(parentClass.getName()));
-            String cases = "";
-            for (int i = 0; i < classes.size(); i++) {
-                cases += "\t\t\tcase " + options.get(i) + ":\n\t\t\t\treturn new "
-                        + getClassNameFromClassPath(classes.get(i).getName()) + "();\n";
-            }
-            content = content.replaceAll("\\{case\\}", cases);
-        }
-        Files.write(path, content.getBytes());
     }
 
     private static Class<?> findCommonParent(List<Class<?>> classList) {
