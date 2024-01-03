@@ -59,7 +59,6 @@ public class AnnotationProcessor extends AbstractProcessor {
     private void processFactory(Set<? extends Element> annotations){
         Map<String, Integer> factoryMap = new HashMap<>();
         List<List<TypeElement>> factories = new ArrayList<>();
-        System.out.println("E1");
         for(Element element : annotations){
             TypeElement typeElement = (TypeElement) element;
             String factoryId = typeElement.getAnnotation(Factory.class).id();
@@ -72,17 +71,12 @@ public class AnnotationProcessor extends AbstractProcessor {
                 factoryMap.put(factoryId, factories.size()-1);
             }
         }
-        System.out.println("E2");
         if(factories.size() != 0){
-            // Types types = processingEnv.getTypeUtils();
-            // Elements elements = processingEnv.getElementUtils();
-            //CommonParentFinder finder = new CommonParentFinder(types, elements);
             for(List<TypeElement> factoryElems : factories){
                 TypeElement parentElem = getCommonParent(factoryElems);
                 PatternFactory.makeFactory(parentElem, factoryElems);
             }
         }
-        System.out.println("E3");
     }
 
     private TypeElement getCommonParent(List<TypeElement> elements){
@@ -101,16 +95,19 @@ public class AnnotationProcessor extends AbstractProcessor {
         tree.add(clazz);
         while(!clazz.toString().equals(Object.class.getName())){
             clazz = ((TypeElement)processingEnv.getTypeUtils().asElement(clazz)).getSuperclass();
+            tree.add(clazz);
         }
         return tree;
     }
 
     private List<TypeMirror> getCommonParent(List<TypeMirror> curParentTree, TypeMirror el2){
         List<TypeMirror> otherClassTree = getParentTree(el2);
+        System.out.println("CUR :\n" + curParentTree);
+        System.out.println("OTHER :\n" + otherClassTree);
         for(int i = 0; i < curParentTree.size(); i++){
             for(int j = 0; j < otherClassTree.size(); j++){
                 if(curParentTree.get(i).equals(otherClassTree.get(j))){
-                    return curParentTree.subList(i, curParentTree.size()-1);
+                    return curParentTree.subList(i, curParentTree.size());
                 }
             }
         }
