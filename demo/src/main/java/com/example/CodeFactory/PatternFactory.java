@@ -34,7 +34,7 @@ public class PatternFactory {
                 } else {
                     content = SnippetLoader.loadPatternSnippet(PatternCode.STS);
                 }
-                if (content != null && content.equals("")) {
+                if (content != null && !content.equals("")) {
                     System.out.println("Singleton code snippet loaded successfully!");
                 } else {
                     System.out.println("Singleton code snippet could not be loaded");

@@ -3,6 +3,8 @@ package com.example.codeFactory;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class SnippetLoader {
 
@@ -12,11 +14,13 @@ public class SnippetLoader {
         F
     }
 
-    private static final String patternPath = "PatternSnippets.txt";
-    private static final String structPath = "StructureSnippets.txt";
+    private static final String patternPath = "/PatternSnippets.txt";
+    private static final String structPath = "/StructureSnippets.txt";
 
     public static String loadPatternSnippet(PatternCode code) throws IOException{
-        BufferedReader reader = new BufferedReader(new FileReader(patternPath));
+        InputStream inputStream = SnippetLoader.class.getResourceAsStream(patternPath);
+        InputStreamReader streamReader = new InputStreamReader(inputStream);
+        BufferedReader reader = new BufferedReader(streamReader);
         String res = "";
         switch (code) {
             case SC:
