@@ -40,7 +40,7 @@ public class PatternFactory {
                     System.out.println("Singleton code snippet could not be loaded");
                     return;
                 }
-                content.replaceAll("\\{class\\}", clazz.getSimpleName().toString())
+                content = content.replaceAll("\\{class\\}", clazz.getSimpleName().toString())
                         .replaceAll("\\{singleton\\}", clazz.getSimpleName() + "Singleton")
                         .replaceAll("\\{path\\}", "package " + packageName);
                 try (PrintWriter writer = new PrintWriter(file)) {

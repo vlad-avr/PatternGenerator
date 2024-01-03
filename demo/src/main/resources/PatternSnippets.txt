@@ -1,5 +1,5 @@
 SC
-{path}
+{path};
 class {singleton}
 {
     private static {class} obj;
@@ -15,7 +15,7 @@ class {singleton}
 }
 ~
 STS
-{path}
+{path};
 class {singleton}
 {
     private static volatile {class} obj  = null;
