@@ -80,8 +80,8 @@ public class PatternFactory {
                 String enumOptions = "";
                 for (TypeElement c : children) {
                     String str = c.getSimpleName().toString();
-                    options.add(str);
-                    enumOptions += "\t\t" + str + ",\n";
+                    options.add(str.toUpperCase());
+                    enumOptions += "\t\t" + str.toUpperCase() + ",\n";
                 }
                 content = content.replaceAll("\\{factory\\}", parent.getSimpleName() + "Factory")
                         .replaceAll("\\{options\\}", enumOptions)
