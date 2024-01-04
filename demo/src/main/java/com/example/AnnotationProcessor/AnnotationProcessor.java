@@ -1,5 +1,7 @@
 package com.example.annotationProcessor;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,10 +13,15 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
+import com.example.annotations.method.ToOverride;
+import com.example.annotations.type.Decorator;
 import com.example.annotations.type.Factory;
 import com.example.annotations.type.Singleton;
 import com.example.codeFactory.PatternFactory;
@@ -43,11 +50,58 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         processSingleton(roundEnv.getElementsAnnotatedWith(Singleton.class));
         processFactory(roundEnv.getElementsAnnotatedWith(Factory.class));
+        processDecorator(roundEnv.getElementsAnnotatedWith(Decorator.class));
 
         return true;
     }
 
+    private void processDecorator(Set<? extends Element> annotations){
+        for(Element element : annotations){
+            System.out.println("Found class annotated with @Decorator: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                String curPackage = element.getAnnotation(Decorator.class).pkg();
+                PatternFactory.makeDecorator(typeElement, getMethods(typeElement, ToOverride.class), curPackage);
+            } else {
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
+    }
 
+    private List<ExecutableElement> getMethods(TypeElement clazz, Class<? extends Annotation> annotation){
+        List<ExecutableElement> markedMethods = new ArrayList<>();
+
+        // Get all methods of the class
+        for (Element enclosedElement : clazz.getEnclosedElements()) {
+            if (enclosedElement.getKind() == ElementKind.METHOD) {
+                ExecutableElement methodElement = (ExecutableElement) enclosedElement;
+
+                // Check if the method is annotated with the specified annotation
+                if (isAnnotationPresent(methodElement, annotation)) {
+                    markedMethods.add(methodElement);
+                }
+            }
+        }
+
+        return markedMethods;
+    }
+
+    private boolean isAnnotationPresent(Element element, Class<? extends Annotation> annotationClass) {
+        // Get the TypeMirror for the annotation
+        TypeMirror annotationTypeMirror = processingEnv.getElementUtils().getTypeElement(annotationClass.getCanonicalName()).asType();
+
+        // Check if the annotation is present on the element
+        List<? extends AnnotationMirror> annotationMirrors = element.getAnnotationMirrors();
+        for (AnnotationMirror annotationMirror : annotationMirrors) {
+            if (processingEnv.getTypeUtils().isSameType(annotationMirror.getAnnotationType(), annotationTypeMirror)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private void processSingleton(Set<? extends Element> annotations){
         for (Element element : annotations) {

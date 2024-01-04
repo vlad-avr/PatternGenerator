@@ -1,6 +1,6 @@
 package com.example.FactoryTest;
 
-import com.example.annotations.Factory;
+import com.example.annotations.type.Factory;
 
 @Factory(id = "F")
 public class Human {

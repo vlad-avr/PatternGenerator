@@ -10,7 +10,8 @@ public class SnippetLoader {
     public static enum PatternCode{
         SC,
         STS,
-        F
+        F,
+        D
     }
 
     private static final String patternPath = "/PatternSnippets.txt";
@@ -30,6 +31,9 @@ public class SnippetLoader {
                 break;
             case F:
                 res = readChunk(PatternCode.F.toString(), "~", reader);
+                break;
+            case D:
+                res = readChunk(PatternCode.D.toString(), "~", reader);
                 break;        
             default:
                 break;

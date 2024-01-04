@@ -5,13 +5,87 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 
 import com.example.codeFactory.SnippetLoader.PatternCode;
 
 public class PatternFactory {
+
+    public static void makeDecorator(TypeElement base, List<ExecutableElement> methods, String packagePath) {
+        String packageName = "";
+        String filePath = "";
+        if (packagePath.equals("-")) {
+            PackageElement pkg = (PackageElement) base.getEnclosingElement();
+            packageName = pkg.getQualifiedName().toString();
+        } else {
+            packageName = packagePath;
+        }
+        filePath = packageName.replace(".", "/");
+        File file = new File("src/main/java/" + filePath + "/" + base.getSimpleName() + "Decorator.java");
+        try {
+            if (file.getParentFile().mkdirs()) {
+                System.out.println("Directory created: " + file.getParentFile());
+            }
+
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getAbsolutePath());
+                String content;
+                content = SnippetLoader.loadPatternSnippet(PatternCode.D);
+                if (content != null && !content.equals("")) {
+                    System.out.println("Singleton code snippet loaded successfully!");
+                } else {
+                    System.out.println("Singleton code snippet could not be loaded");
+                    return;
+                }
+                String imports = "import " + base.getQualifiedName() + ";";
+                content = content.replaceAll("\\{base\\}", base.getSimpleName().toString())
+                        .replaceAll("\\{decor\\}", base.getSimpleName() + "Decorator")
+                        .replaceAll("\\{path\\}", "package " + packageName).replaceAll("\\{imports\\}", imports);
+                String overrides = "";
+                for (ExecutableElement method : methods) {
+                    overrides += "\t@Override\n\t";
+                    Set<Modifier> modifiers = method.getModifiers();
+                    String modString = "";
+                    for (Modifier mod : modifiers) {
+                        modString += mod.name() + " ";
+                    }
+                    overrides += modString + method.getReturnType() + " " + method.getSimpleName() + "(";
+                    String paramList = "";
+                    List<? extends VariableElement> parameters = method.getParameters();
+                    for(int i = 0; i < parameters.size(); i++){
+                        String parameterName = parameters.get(i).getSimpleName().toString();
+                        paramList += parameterName;
+                        TypeMirror parameterType = parameters.get(i).asType();
+                        overrides += parameterType + " " + parameterName;
+                        if(i != parameters.size()+1){
+                            overrides += ", ";
+                            paramList += ", ";
+                        }
+                    }
+                    overrides += "){\n\t\treturn super." + method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
+                }
+
+                content = content.replaceAll("\\{overrides\\}", overrides);
+
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.println(content);
+                }
+
+                System.out.println("Content written to the file.");
+            } else {
+                System.out.println(file.getAbsolutePath() + " already exists.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void makeSingleton(TypeElement clazz, boolean threadSafe, String packagePath) {
         String packageName = "";

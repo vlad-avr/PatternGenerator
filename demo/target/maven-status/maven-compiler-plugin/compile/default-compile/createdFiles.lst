@@ -1,8 +1,10 @@
-com\example\annotations\Factory.class
 com\example\inputHandler\InputHandler.class
 com\example\codeFactory\SnippetLoader.class
+com\example\annotations\type\Decorator.class
 com\example\codeFactory\SnippetLoader$1.class
-com\example\annotations\Singleton.class
 com\example\codeFactory\PatternFactory.class
+com\example\annotations\type\Singleton.class
+com\example\annotations\method\ToOverride.class
+com\example\annotations\type\Factory.class
 com\example\annotationProcessor\AnnotationProcessor.class
 com\example\codeFactory\SnippetLoader$PatternCode.class
