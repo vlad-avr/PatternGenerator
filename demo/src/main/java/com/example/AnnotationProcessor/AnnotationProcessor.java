@@ -15,8 +15,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-import com.example.annotations.Factory;
-import com.example.annotations.Singleton;
+import com.example.annotations.method.Factory;
+import com.example.annotations.method.Singleton;
 import com.example.codeFactory.PatternFactory;
 
 public class AnnotationProcessor extends AbstractProcessor {

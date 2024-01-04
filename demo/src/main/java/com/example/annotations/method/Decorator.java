@@ -1,4 +1,4 @@
-package com.example.annotations;
+package com.example.annotations.method;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface Factory {
-    String id();
+public @interface Decorator {
     String pkg() default "-";
 }

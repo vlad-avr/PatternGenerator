@@ -64,3 +64,18 @@ class {factory}{
     }
 }
 ~
+D
+{path};
+
+{imports};
+
+class {decor} extends {base}{
+    protected {base} decorated{base};
+
+    public {decor}({base} obj){
+        this.decorated{base} = obj;
+    }
+
+    {overrides}
+}
+~
