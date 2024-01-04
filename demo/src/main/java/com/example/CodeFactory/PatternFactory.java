@@ -54,7 +54,7 @@ public class PatternFactory {
                     Set<Modifier> modifiers = method.getModifiers();
                     String modString = "";
                     for (Modifier mod : modifiers) {
-                        modString += mod.name() + " ";
+                        modString += mod.name().toLowerCase() + " ";
                     }
                     overrides += modString + method.getReturnType() + " " + method.getSimpleName() + "(";
                     String paramList = "";
@@ -64,12 +64,12 @@ public class PatternFactory {
                         paramList += parameterName;
                         TypeMirror parameterType = parameters.get(i).asType();
                         overrides += parameterType + " " + parameterName;
-                        if(i != parameters.size()+1){
+                        if(i != parameters.size() - 1){
                             overrides += ", ";
                             paramList += ", ";
                         }
                     }
-                    overrides += "){\n\t\treturn super." + method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
+                    overrides += "){\n\t\treturn decorated" + base.getSimpleName() + "." + method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
                 }
 
                 content = content.replaceAll("\\{overrides\\}", overrides);
