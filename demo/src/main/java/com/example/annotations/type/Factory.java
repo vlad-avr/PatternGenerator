@@ -1,4 +1,4 @@
-package com.example.annotations.method;
+package com.example.annotations.type;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface Singleton {
-    boolean threadSafe() default true;
+public @interface Factory {
+    String id();
     String pkg() default "-";
 }

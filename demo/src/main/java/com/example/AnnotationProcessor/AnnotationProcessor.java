@@ -15,8 +15,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 
-import com.example.annotations.method.Factory;
-import com.example.annotations.method.Singleton;
+import com.example.annotations.type.Factory;
+import com.example.annotations.type.Singleton;
 import com.example.codeFactory.PatternFactory;
 
 public class AnnotationProcessor extends AbstractProcessor {
@@ -24,8 +24,10 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotations = new HashSet<>();
-        annotations.add("com.example.annotations.Singleton");
-        annotations.add("com.example.annotations.Factory");
+        annotations.add("com.example.annotations.type.Singleton");
+        annotations.add("com.example.annotations.type.Factory");
+        annotations.add("com.example.annotations.type.Decorator");
+        annotations.add("com.example.annotations.method.ToOverride");
         // Add more annotation types as needed
         return annotations;
     }
@@ -44,6 +46,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         return true;
     }
+
+
 
     private void processSingleton(Set<? extends Element> annotations){
         for (Element element : annotations) {
