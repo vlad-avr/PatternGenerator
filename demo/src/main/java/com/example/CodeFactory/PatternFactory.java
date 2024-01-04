@@ -68,8 +68,9 @@ public class PatternFactory {
                         continue;
                     }
                     if (!modifiers.contains(Modifier.STATIC)) {
-                        overrides += "\t@Override\n\t";
+                        overrides += "\t@Override";
                     }
+                    overrides += "\n\t";
                     String modString = "";
                     for (Modifier mod : modifiers) {
                         if (!mod.equals(Modifier.ABSTRACT)) {
