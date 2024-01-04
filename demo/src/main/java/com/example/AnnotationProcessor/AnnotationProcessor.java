@@ -38,7 +38,15 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         System.out.println("\nPROCESSOR WORKING!");
-        for (Element element : roundEnv.getElementsAnnotatedWith(Singleton.class)) {
+
+        processSingleton(roundEnv.getElementsAnnotatedWith(Singleton.class));
+        processFactory(roundEnv.getElementsAnnotatedWith(Factory.class));
+
+        return true;
+    }
+
+    private void processSingleton(Set<? extends Element> annotations){
+        for (Element element : annotations) {
             System.out.println("Found class annotated with @Singleton: " + element);
             if (element instanceof TypeElement) {
                 // If the element is a class
@@ -50,10 +58,6 @@ public class AnnotationProcessor extends AbstractProcessor {
                 System.out.println("Element is not a class. Skipping.");
             }
         }
-
-        processFactory(roundEnv.getElementsAnnotatedWith(Factory.class));
-
-        return true;
     }
 
     private void processFactory(Set<? extends Element> annotations){

@@ -8,5 +8,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Singleton {
-    boolean threadSafe() default false;
+    boolean threadSafe() default true;
+    String pkg() default "";
 }
