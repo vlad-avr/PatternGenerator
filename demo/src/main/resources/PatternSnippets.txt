@@ -1,5 +1,8 @@
 SC
 {path};
+
+{imports}
+
 class {singleton}
 {
     private static {class} obj;
@@ -16,6 +19,9 @@ class {singleton}
 ~
 STS
 {path};
+
+{imports}
+
 class {singleton}
 {
     private static volatile {class} obj  = null;
@@ -40,6 +46,9 @@ class {singleton}
 ~
 F
 {path};
+
+{imports}
+
 class {factory}{
 
     public static enum Option{

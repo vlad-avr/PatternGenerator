@@ -46,6 +46,8 @@ public class PatternFactory {
                 content = content.replaceAll("\\{class\\}", clazz.getSimpleName().toString())
                         .replaceAll("\\{singleton\\}", clazz.getSimpleName() + "Singleton")
                         .replaceAll("\\{path\\}", "package " + packageName);
+                String imports = "import " + clazz.getQualifiedName() + ";";
+                content = content.replaceAll("\\{imports\\}", imports);
                 try (PrintWriter writer = new PrintWriter(file)) {
                     writer.println(content);
                 }
@@ -106,10 +108,15 @@ public class PatternFactory {
                             + children.get(i).getSimpleName() + "();\n";
                 }
                 content = content.replaceAll("\\{case\\}", cases);
+                String imports = "import " + parent.getQualifiedName() + ";";
+                for (TypeElement child : children) {
+                    imports += "\nimport " + child.getQualifiedName() + ";";
+                }
+                content = content.replaceAll("\\{imports\\}", imports);
+
                 try (PrintWriter writer = new PrintWriter(file)) {
                     writer.println(content);
                 }
-
                 System.out.println("Content written to the file.");
             } else {
                 System.out.println(file.getAbsolutePath() + " already exists.");
