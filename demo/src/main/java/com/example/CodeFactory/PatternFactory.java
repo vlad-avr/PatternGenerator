@@ -12,6 +12,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import com.example.codeFactory.SnippetLoader.PatternCode;
@@ -50,8 +51,11 @@ public class PatternFactory {
                         .replaceAll("\\{path\\}", "package " + packageName).replaceAll("\\{imports\\}", imports);
                 String overrides = "";
                 for (ExecutableElement method : methods) {
-                    overrides += "\t@Override\n\t";
                     Set<Modifier> modifiers = method.getModifiers();
+                    if(modifiers.contains(Modifier.STATIC)){
+                        continue;
+                    }
+                    overrides += "\t@Override\n\t";
                     String modString = "";
                     for (Modifier mod : modifiers) {
                         modString += mod.name().toLowerCase() + " ";
@@ -69,7 +73,16 @@ public class PatternFactory {
                             paramList += ", ";
                         }
                     }
-                    overrides += "){\n\t\treturn decorated" + base.getSimpleName() + "." + method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
+                    overrides += "){\n\t\t";
+                    if(!method.getReturnType().getKind().equals(TypeKind.VOID)){
+                        overrides += "return ";
+                    }
+                    if(modifiers.contains(Modifier.PROTECTED) || modifiers.contains(Modifier.PRIVATE)){
+                        overrides += "super.";
+                    }else{
+                        overrides += "decorated" + base.getSimpleName() + ".";
+                    } 
+                    overrides += method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
                 }
 
                 content = content.replaceAll("\\{overrides\\}", overrides);

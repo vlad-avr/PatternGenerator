@@ -26,7 +26,12 @@ public class Animal {
     @ToOverride 
     public List<String> getEmptyList(){
         return new ArrayList<>();
-    } 
+    }
+    
+    @ToOverride
+    private static void usefulMethod(String basedData){
+        System.out.println(basedData);
+    }
 
     public void nothing(){}
 }

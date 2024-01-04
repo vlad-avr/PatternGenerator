@@ -16,12 +16,12 @@ class AnimalDecorator extends Animal{
 
 	@Override
 	public synchronized void sayStr(java.lang.String str){
-		return decoratedAnimal.sayStr(str);
+		decoratedAnimal.sayStr(str);
 	}
 
 	@Override
 	protected java.lang.String getMeme(int id, float idf){
-		return decoratedAnimal.getMeme(id, idf);
+		return super.getMeme(id, idf);
 	}
 
 	@Override
