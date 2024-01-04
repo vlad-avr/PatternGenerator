@@ -69,11 +69,11 @@ D
 
 {imports};
 
-class {decor} extends {base}{
-    protected {base} decorated{base};
+class {decor} {inheritance} {base}{
+    {interface_ref}
 
-    public {decor}({base} obj){
-        this.decorated{base} = obj;
+    public {decor}({constr_arg}){
+        {constr_body}
     }
 
 {overrides}

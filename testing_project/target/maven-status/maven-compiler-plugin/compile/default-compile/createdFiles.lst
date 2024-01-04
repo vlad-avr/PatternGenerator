@@ -4,6 +4,7 @@ com\example\pattern\factory\AnimalFactory.class
 com\example\pattern\factory\ObjectFactory$1.class
 com\example\dummy\D2Singleton.class
 com\example\FactoryTest\Animal.class
+com\example\FactoryTest\AnimalInterface.class
 com\example\dummy\D2.class
 com\example\FactoryTest\Human.class
 com\example\FactoryTest\Worker.class

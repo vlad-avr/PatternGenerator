@@ -30,6 +30,7 @@ public class PatternFactory {
         }
         filePath = packageName.replace(".", "/");
         File file = new File("src/main/java/" + filePath + "/" + base.getSimpleName() + "Decorator.java");
+        boolean isInterface = base.getKind().isInterface();
         try {
             if (file.getParentFile().mkdirs()) {
                 System.out.println("Directory created: " + file.getParentFile());
@@ -40,25 +41,40 @@ public class PatternFactory {
                 String content;
                 content = SnippetLoader.loadPatternSnippet(PatternCode.D);
                 if (content != null && !content.equals("")) {
-                    System.out.println("Singleton code snippet loaded successfully!");
+                    System.out.println("Decorator code snippet loaded successfully!");
                 } else {
-                    System.out.println("Singleton code snippet could not be loaded");
+                    System.out.println("Decorator code snippet could not be loaded");
                     return;
                 }
                 String imports = "import " + base.getQualifiedName() + ";";
+                if (isInterface) {
+                    content = content.replaceAll("\\{interface_ref\\}", "protected {base} decorated{base};").replaceAll("\\{constr_arg\\}", "{base} obj")
+                            .replaceAll("\\{constr_body\\}", "this.decorated{base} = obj;")
+                            .replaceAll("\\{inheritance\\}", "implements");
+                } else {
+                    content = content.replaceAll("\\{interface_ref\\}", "")
+                            .replaceAll("\\{constr_arg\\}", "")
+                            .replaceAll("\\{constr_body\\}", "super();")
+                            .replaceAll("\\{inheritance\\}", "extends");
+                }
                 content = content.replaceAll("\\{base\\}", base.getSimpleName().toString())
                         .replaceAll("\\{decor\\}", base.getSimpleName() + "Decorator")
                         .replaceAll("\\{path\\}", "package " + packageName).replaceAll("\\{imports\\}", imports);
                 String overrides = "";
                 for (ExecutableElement method : methods) {
                     Set<Modifier> modifiers = method.getModifiers();
-                    if (modifiers.contains(Modifier.STATIC)) {
+                    if (!isInterface && (modifiers.contains(Modifier.PRIVATE)
+                            || (modifiers.contains(Modifier.STATIC) && modifiers.contains(Modifier.PROTECTED)))) {
                         continue;
-                    } 
-                    overrides += "\t@Override\n\t";
+                    }
+                    if (!modifiers.contains(Modifier.STATIC)) {
+                        overrides += "\t@Override\n\t";
+                    }
                     String modString = "";
                     for (Modifier mod : modifiers) {
-                        modString += mod.name().toLowerCase() + " ";
+                        if (!mod.equals(Modifier.ABSTRACT)) {
+                            modString += mod.name().toLowerCase() + " ";
+                        }
                     }
                     overrides += modString + method.getReturnType() + " " + method.getSimpleName() + "(";
                     String paramList = "";
@@ -77,12 +93,19 @@ public class PatternFactory {
                     if (!method.getReturnType().getKind().equals(TypeKind.VOID)) {
                         overrides += "return ";
                     }
-
-                    if (modifiers.contains(Modifier.PROTECTED) || modifiers.contains(Modifier.PRIVATE)) {
-                        overrides += "super.";
+                    if (isInterface) {
+                        if (!modifiers.contains(Modifier.STATIC)) {
+                            overrides += "decorated";
+                        }
+                        overrides += base.getSimpleName() + ".";
                     } else {
-                        overrides += "decorated" + base.getSimpleName() + ".";
+                        if (modifiers.contains(Modifier.STATIC)) {
+                            overrides += base.getSimpleName() + ".";
+                        } else {
+                            overrides += "super.";
+                        }
                     }
+
                     overrides += method.getSimpleName() + "(" + paramList + ");\n\t}\n\n";
                 }
 
