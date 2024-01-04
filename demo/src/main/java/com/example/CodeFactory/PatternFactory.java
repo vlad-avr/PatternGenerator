@@ -52,9 +52,9 @@ public class PatternFactory {
                 String overrides = "";
                 for (ExecutableElement method : methods) {
                     Set<Modifier> modifiers = method.getModifiers();
-                    if(modifiers.contains(Modifier.STATIC)){
+                    if (modifiers.contains(Modifier.STATIC)) {
                         continue;
-                    }
+                    } 
                     overrides += "\t@Override\n\t";
                     String modString = "";
                     for (Modifier mod : modifiers) {
@@ -63,26 +63,27 @@ public class PatternFactory {
                     overrides += modString + method.getReturnType() + " " + method.getSimpleName() + "(";
                     String paramList = "";
                     List<? extends VariableElement> parameters = method.getParameters();
-                    for(int i = 0; i < parameters.size(); i++){
+                    for (int i = 0; i < parameters.size(); i++) {
                         String parameterName = parameters.get(i).getSimpleName().toString();
                         paramList += parameterName;
                         TypeMirror parameterType = parameters.get(i).asType();
                         overrides += parameterType + " " + parameterName;
-                        if(i != parameters.size() - 1){
+                        if (i != parameters.size() - 1) {
                             overrides += ", ";
                             paramList += ", ";
                         }
                     }
                     overrides += "){\n\t\t";
-                    if(!method.getReturnType().getKind().equals(TypeKind.VOID)){
+                    if (!method.getReturnType().getKind().equals(TypeKind.VOID)) {
                         overrides += "return ";
                     }
-                    if(modifiers.contains(Modifier.PROTECTED) || modifiers.contains(Modifier.PRIVATE)){
+
+                    if (modifiers.contains(Modifier.PROTECTED) || modifiers.contains(Modifier.PRIVATE)) {
                         overrides += "super.";
-                    }else{
+                    } else {
                         overrides += "decorated" + base.getSimpleName() + ".";
-                    } 
-                    overrides += method.getSimpleName()+"(" + paramList + ");\n\t}\n\n";
+                    }
+                    overrides += method.getSimpleName() + "(" + paramList + ");\n\t}\n\n";
                 }
 
                 content = content.replaceAll("\\{overrides\\}", overrides);
