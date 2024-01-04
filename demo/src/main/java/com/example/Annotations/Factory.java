@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Factory {
     String id();
-    String pkg() default "";
+    String pkg() default "-";
 }

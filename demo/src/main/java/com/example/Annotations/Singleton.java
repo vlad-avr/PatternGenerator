@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Singleton {
     boolean threadSafe() default true;
-    String pkg() default "";
+    String pkg() default "-";
 }

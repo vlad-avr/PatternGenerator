@@ -52,7 +52,8 @@ public class AnnotationProcessor extends AbstractProcessor {
                 // If the element is a class
                 TypeElement typeElement = (TypeElement) element;
                 boolean threadSafe = element.getAnnotation(Singleton.class).threadSafe();
-                PatternFactory.makeSingleton(typeElement, threadSafe);
+                String curPackage = element.getAnnotation(Singleton.class).pkg();
+                PatternFactory.makeSingleton(typeElement, threadSafe, curPackage);
             } else {
                 // Handle the case where the element is a package (or other non-class element)
                 System.out.println("Element is not a class. Skipping.");
@@ -63,9 +64,14 @@ public class AnnotationProcessor extends AbstractProcessor {
     private void processFactory(Set<? extends Element> annotations){
         Map<String, Integer> factoryMap = new HashMap<>();
         List<List<TypeElement>> factories = new ArrayList<>();
+        String curPackage = null;
         for(Element element : annotations){
             TypeElement typeElement = (TypeElement) element;
             String factoryId = typeElement.getAnnotation(Factory.class).id();
+            String tmp = typeElement.getAnnotation(Factory.class).pkg();
+            if(!tmp.equals("-")){
+                curPackage = tmp;
+            }
             if(factoryMap.containsKey(factoryId)){
                 factories.get(factoryMap.get(factoryId)).add(typeElement);
             }else{
@@ -78,7 +84,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         if(factories.size() != 0){
             for(List<TypeElement> factoryElems : factories){
                 TypeElement parentElem = getCommonParent(factoryElems);
-                PatternFactory.makeFactory(parentElem, factoryElems);
+                PatternFactory.makeFactory(parentElem, factoryElems, curPackage);
             }
         }
     }

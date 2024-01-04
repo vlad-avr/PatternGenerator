@@ -13,10 +13,16 @@ import com.example.codeFactory.SnippetLoader.PatternCode;
 
 public class PatternFactory {
 
-    public static void makeSingleton(TypeElement clazz, boolean threadSafe) {
-        PackageElement pkg = (PackageElement) clazz.getEnclosingElement();
-        String packageName = pkg.getQualifiedName().toString();
-        String filePath = packageName.replace('.', '/');
+    public static void makeSingleton(TypeElement clazz, boolean threadSafe, String packagePath) {
+        String packageName = "";
+        String filePath = "";
+        if (packagePath.equals("-")) {
+            PackageElement pkg = (PackageElement) clazz.getEnclosingElement();
+            packageName = pkg.getQualifiedName().toString();
+        } else {
+            packageName = packagePath;
+        }
+        filePath = packageName.replace(".", "/");
         File file = new File("src/main/java/" + filePath + "/" + clazz.getSimpleName() + "Singleton.java");
         try {
             if (file.getParentFile().mkdirs()) {
@@ -53,13 +59,19 @@ public class PatternFactory {
         }
     }
 
-    public static void makeFactory(TypeElement parent, List<TypeElement> children) {
-        if(children == null || children.size() == 0){
+    public static void makeFactory(TypeElement parent, List<TypeElement> children, String packagePath) {
+        if (children == null || children.size() == 0) {
             return;
         }
-        PackageElement pkg = (PackageElement) children.get(0).getEnclosingElement();
-        String packageName = pkg.getQualifiedName().toString();
-        String filePath = packageName.replace('.', '/');
+        String packageName = "";
+        String filePath = "";
+        if (packagePath.equals("-")) {
+            PackageElement pkg = (PackageElement) children.get(0).getEnclosingElement();
+            packageName = pkg.getQualifiedName().toString();
+        } else {
+            packageName = packagePath;
+        }
+        filePath = packageName.replace(".", "/");
         File file = new File("src/main/java/" + filePath + "/" + parent.getSimpleName() + "Factory.java");
         try {
             if (file.getParentFile().mkdirs()) {
@@ -106,6 +118,5 @@ public class PatternFactory {
             e.printStackTrace();
         }
     }
-
 
 }
