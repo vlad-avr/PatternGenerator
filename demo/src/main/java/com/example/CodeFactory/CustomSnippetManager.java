@@ -41,7 +41,7 @@ public class CustomSnippetManager {
             if (!snippetsFile.exists()) {
                 System.out.println("Snippet file created: " + snippetsFile.getAbsolutePath());
             }
-            String content = processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
+            String content = "package {pkg};\n" + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
                     "\\{class\\}");
             try (PrintWriter writer = new PrintWriter(new FileWriter(snippetsFile, false))) {
                 writer.println(content);
@@ -79,8 +79,16 @@ public class CustomSnippetManager {
 
     private static String processClass(String path) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(path)));
+        content = content.replaceAll("import com.example.annotations.field.CustomField;", "")
+                .replaceAll("import com.example.annotations.method.CustomMethod;", "")
+                .replaceAll("import com.example.annotations.type.Custom;", "")
+                .replaceAll("import com.example.annotations.type.CustomEnum;", "");
         String processed = "";
-        processed += content.substring(0, content.indexOf("@Custom"));
+        int startPos = 0;
+        if(content.startsWith("package")){
+            startPos = content.indexOf(";") + 1;
+        }
+        processed += content.substring(startPos, content.indexOf("@Custom"));
         content = content.replaceFirst(processed + "@Custom", "");
         processed += "\n" + content.substring(0, content.indexOf("{") + 1);
         int pos = 0;
@@ -100,9 +108,6 @@ public class CustomSnippetManager {
                 while (bracketsBalance > 0) {
                     int nextOpenBracketPos = content.indexOf("{", curPos + 1);
                     int nextCloseBracketPos = content.indexOf("}", curPos + 1);
-                    System.out.println("\nDEBUG: open - " + nextOpenBracketPos + "\t close - " + nextCloseBracketPos
-                            + "\t bal - " + bracketsBalance);
-                    // curPos = Math.min(nextCloseBracketPos, nextOpenBracketPos);
                     if (nextOpenBracketPos == -1 || nextOpenBracketPos > nextCloseBracketPos) {
                         bracketsBalance--;
                         curPos = nextCloseBracketPos;
@@ -111,7 +116,6 @@ public class CustomSnippetManager {
                         curPos = nextOpenBracketPos;
                     }
                 }
-                System.out.println("\nCHARAT: " + content.charAt(curPos) + "\n");
                 extracted += content.substring(extractionStart, curPos + 1);
             }
             content = content.replaceFirst("@CustomMethod", "");

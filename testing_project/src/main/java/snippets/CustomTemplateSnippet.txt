@@ -1,12 +1,13 @@
-package com.example.customTemplateCreatorTest;
-
-import com.example.annotations.field.CustomField;
-import com.example.annotations.method.CustomMethod;
-import com.example.annotations.type.Custom;
-import com.example.annotations.type.CustomEnum;
+package {pkg};
+;
 
 
 
+
+
+
+
+package com.example.customTemplateCreatorTest
 public class {class} extends Object {
 
     private int brainCells = 2;
