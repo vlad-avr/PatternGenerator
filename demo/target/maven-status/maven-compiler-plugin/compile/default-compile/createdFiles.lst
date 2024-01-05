@@ -1,4 +1,3 @@
-com\example\inputHandler\InputHandler.class
 com\example\codeFactory\SnippetLoader.class
 com\example\annotations\type\Decorator.class
 com\example\codeFactory\SnippetLoader$1.class
