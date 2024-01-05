@@ -18,15 +18,13 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
-import com.example.annotations.constructor.CustomConstructor;
-import com.example.annotations.field.CustomField;
-import com.example.annotations.method.CustomMethod;
 import com.example.annotations.method.ToOverride;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
@@ -80,12 +78,13 @@ public class AnnotationProcessor extends AbstractProcessor {
                     System.out.println("@Custom annotation cannot be applied to Interfaces");
                     return;
                 }
-                if(element.getKind() == ElementKind.ENUM){
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + "is an Enum -> SKIPPED");
                     continue;
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {
-                    CustomSnippetManager.saveSnippet(typeElement,  path);
+                    CustomSnippetManager.saveSnippet(typeElement, path);
                 }
             } else {
                 // Handle the case where the element is a package (or other non-class element)
@@ -258,13 +257,24 @@ public class AnnotationProcessor extends AbstractProcessor {
         Filer filer = processingEnv.getFiler();
 
         try {
-            // Get the class file for the specified element
-            FileObject fileObject = filer.getResource(StandardLocation.CLASS_OUTPUT,
-                    element.getEnclosingElement().toString(),
-                    element.getSimpleName() + ".class");
+            // Get the package name
+            String packageName = "";
+            if (element.getEnclosingElement() instanceof PackageElement) {
+                packageName = ((PackageElement) element.getEnclosingElement()).getQualifiedName().toString();
+            } else if (element.getEnclosingElement() instanceof TypeElement) {
+                packageName = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
+            }
+
+            // Construct the path to the source file
+            String sourceFilePath = packageName.replace('.', '/') + "/" + element.getSimpleName() + ".java";
+
+            // Get the source file for the specified element
+            FileObject fileObject = filer.getResource(StandardLocation.SOURCE_PATH, "", sourceFilePath);
 
             // Get the absolute path
-            return fileObject.toUri().getPath();
+            String absolutePath = fileObject.toUri().getPath().replaceFirst("/", "");
+            return absolutePath;
+
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();

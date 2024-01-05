@@ -10,16 +10,20 @@ import java.nio.file.Paths;
 import javax.lang.model.element.TypeElement;
 
 public class CustomSnippetManager {
-    private static final String snippetPath = "src/main/java/snippets";
+    private static final String snippetPath = "src/main/java/snippets/Snippets.txt";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
 
     public static void saveSnippet(TypeElement element, String pathToClassFile) {
-        String path = snippetPath + "/" + element.getSimpleName() + ".txt";
 
-        File file = new File(path);
+        File snippetsFile = new File(snippetPath);
         File catalogueFile = new File(cataloguePath);
         try {
-            if (!catalogueFile.exists()) {
+            if (catalogueFile.getParentFile().mkdirs()) {
+                System.out.println("Package for Custom Templates created: " + catalogueFile.getParentFile());
+            }
+
+            if (snippetsFile.createNewFile()) {
+                System.out.println("Catalogue of saved Custom Templates created: " + catalogueFile.getAbsolutePath());
                 writeCatalogue(catalogueFile);
             }
             addOption(element.getSimpleName().toString(), catalogueFile);
@@ -29,21 +33,21 @@ public class CustomSnippetManager {
             return;
         }
         try {
-            if (file.getParentFile().mkdirs()) {
-                System.out.println("Directory created: " + file.getParentFile());
+            if (snippetsFile.getParentFile().mkdirs()) {
+                System.out.println("Snippets package created: " + snippetsFile.getParentFile());
             }
 
-            if (file.createNewFile()) {
-                System.out.println("File created: " + file.getAbsolutePath());
-                String content = element.getSimpleName().toString().toUpperCase() + "\n" + processClass(path) + "\n~\n";
-                content = content.replaceAll(element.getSimpleName().toString(), "\\{class\\}");
-                try (PrintWriter writer = new PrintWriter(file)) {
-                    writer.println(content);
-                }
-                System.out.println("Content written to the file.");
-            } else {
-                System.out.println(file.getAbsolutePath() + " already exists.");
+            if(!snippetsFile.exists()){
+                System.out.println("Snippets library created: " + snippetsFile.getAbsolutePath());
             }
+            String content = new String(Files.readAllBytes(Paths.get(snippetPath)));
+            content += element.getSimpleName().toString().toUpperCase() + "\n"
+                    + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(), "\\{class\\}")
+                    + "\n~\n";
+            try (PrintWriter writer = new PrintWriter(snippetsFile)) {
+                writer.println(content);
+            }
+            System.out.println("Content written to the file.");
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -64,22 +68,27 @@ public class CustomSnippetManager {
 
     private static void addOption(String className, File catalogueFile) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(cataloguePath)));
-        content = content.replace("\t\tNull,\n", "\t\t" + className + ",\n\t\tNull,\n");
+        if (content.contains(className)) {
+            System.out.println(className + " is already in a catalogue.");
+            return;
+        }
+        content = content.replaceFirst("\t\tNull,\n", "\t\t" + className + ",\n\t\tNull,\n");
         try (PrintWriter writer = new PrintWriter(catalogueFile)) {
             writer.println(content);
         }
     }
 
     private static String processClass(String path) throws IOException {
+        System.out.println("PATH DEBUG\t" + path);
         String content = new String(Files.readAllBytes(Paths.get(path)));
         String processed = "";
         processed += content.substring(0, content.indexOf("@Custom"));
-        content = content.replace(processed + "@Custom", "");
+        content = content.replaceFirst(processed + "@Custom", "");
         processed += "\n" + content.substring(0, content.indexOf("{") + 1);
         int pos = 0;
         while ((pos = content.indexOf("@CustomField")) != -1) {
             String extracted = content.substring(pos, content.indexOf(";", pos));
-            content.replace(extracted, "");
+            content.replaceFirst(extracted, "");
             extracted = extracted.replaceAll("\\@CustomField()", "").replaceAll("\\@CustomField", "");
             processed += "\n" + extracted + "\n";
         }
@@ -107,13 +116,13 @@ public class CustomSnippetManager {
                 }
                 extracted += content.substring(extractionStart, curPos);
             }
-            content.replace(extracted, "");
+            content.replaceFirst(extracted, "");
             extracted = extracted.replaceAll("\\@CustomMethod()", "").replaceAll("\\@CustomMethod", "");
             processed += "\n" + extracted + "\n";
         }
         while ((pos = content.indexOf("@CustomEnum")) != -1) {
             String extracted = content.substring(pos, content.indexOf("}", pos));
-            content.replace(extracted, "");
+            content.replaceFirst(extracted, "");
             extracted.replaceAll("\\@CustomEnum()", "").replaceAll("\\@CustomEnum", "");
             processed += "\n" + extracted + "\n";
         }
@@ -138,7 +147,7 @@ public class CustomSnippetManager {
                 }
             }
             extracted += content.substring(extractionStart, curPos);
-            content.replace(extracted, "");
+            content.replaceFirst(extracted, "");
             extracted = extracted.replaceAll("\\@Custom()", "").replaceAll("\\@Custom", "");
             processed += "\n" + extracted + "\n";
         }
