@@ -1,0 +1,51 @@
+package com.example.customTemplateCreatorTest;
+
+import com.example.annotations.field.CustomField;
+import com.example.annotations.method.CustomMethod;
+import com.example.annotations.type.Custom;
+import com.example.annotations.type.CustomEnum;
+
+
+public class {class} {
+
+    private int brainCells = 2;
+
+
+    public static final String msg = "Bismark";
+
+
+    public {class}(int numberOfBrainCells){
+        this.brainCells = numberOfBrainCells;
+    }
+
+
+    public {class}(){
+        System.out.println("CONSTRUCTING SOMETHING HERE!!!!");
+    }
+
+
+    public {class}(String number){
+        System.out.println(number);
+    }
+
+
+    public static int getTwoIfTrue(boolean bool){
+        if(bool){
+            return 2;
+        }else{
+            return 69;
+        }
+    }
+
+
+    public static enum CoolEnum{
+        COOL,
+        VERY_COOL,
+    }
+
+
+    public static enum LameEnum{
+        LAME,
+        VERY_LAME,
+    }
+}

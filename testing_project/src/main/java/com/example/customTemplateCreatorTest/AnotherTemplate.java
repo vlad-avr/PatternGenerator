@@ -4,14 +4,13 @@ import com.example.annotations.field.CustomField;
 import com.example.annotations.method.CustomMethod;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.CustomEnum;
-
 @Custom
-public class CustomTemplate extends Object {
+public class AnotherTemplate {
     @CustomField
     private int brainCells = 2;
     @CustomField
     public static final String msg = "Bismark";
-    @CustomField
+
     private final String unimportantField = "NOT IMPORTANT";
 
     @CustomEnum
@@ -20,25 +19,33 @@ public class CustomTemplate extends Object {
         VERY_COOL,
     }
 
-    @Custom
+    @CustomEnum
     public static enum LameEnum{
         LAME,
         VERY_LAME,
     }
 
     @CustomMethod
-    public CustomTemplate(int numberOfBrainCells){
+    public AnotherTemplate(int numberOfBrainCells){
         this.brainCells = numberOfBrainCells;
     }
 
     @CustomMethod
-    public CustomTemplate(){
+    public AnotherTemplate(){
         System.out.println("CONSTRUCTING SOMETHING HERE!!!!");
     }
-
-    public CustomTemplate(String number){
+    @CustomMethod
+    public AnotherTemplate(String number){
         System.out.println(number);
     }
 
+    @CustomMethod
+    public static int getTwoIfTrue(boolean bool){
+        if(bool){
+            return 2;
+        }else{
+            return 69;
+        }
+    }
 
 }

@@ -2,6 +2,7 @@ package com.example.codeFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -10,12 +11,12 @@ import java.nio.file.Paths;
 import javax.lang.model.element.TypeElement;
 
 public class CustomSnippetManager {
-    private static final String snippetPath = "src/main/java/snippets/Snippets.txt";
+    private static final String snippetPath = "src/main/java/snippets/";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
 
     public static void saveSnippet(TypeElement element, String pathToClassFile) {
 
-        File snippetsFile = new File(snippetPath);
+        File snippetsFile = new File(snippetPath + element.getSimpleName() + "Snippet.txt");
         File catalogueFile = new File(cataloguePath);
         try {
             if (catalogueFile.getParentFile().mkdirs()) {
@@ -37,14 +38,12 @@ public class CustomSnippetManager {
                 System.out.println("Snippets package created: " + snippetsFile.getParentFile());
             }
 
-            if(!snippetsFile.exists()){
-                System.out.println("Snippets library created: " + snippetsFile.getAbsolutePath());
+            if (!snippetsFile.exists()) {
+                System.out.println("Snippet file created: " + snippetsFile.getAbsolutePath());
             }
-            String content = new String(Files.readAllBytes(Paths.get(snippetPath)));
-            content += element.getSimpleName().toString().toUpperCase() + "\n"
-                    + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(), "\\{class\\}")
-                    + "\n~\n";
-            try (PrintWriter writer = new PrintWriter(snippetsFile)) {
+            String content = processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
+                    "\\{class\\}");
+            try (PrintWriter writer = new PrintWriter(new FileWriter(snippetsFile, false))) {
                 writer.println(content);
             }
             System.out.println("Content written to the file.");
@@ -85,15 +84,12 @@ public class CustomSnippetManager {
         content = content.replaceFirst(processed + "@Custom", "");
         processed += "\n" + content.substring(0, content.indexOf("{") + 1);
         int pos = 0;
-        System.out.println("\nSTART\n");
         while ((pos = content.indexOf("@CustomField")) != -1) {
             String extracted = content.substring(pos, content.indexOf(";", pos) + 1);
-            System.out.println(extracted);
             content = content.replaceFirst("@CustomField", "");
             extracted = extracted.replaceAll("\\@CustomField()", "").replaceAll("\\@CustomField", "");
             processed += "\n" + extracted + "\n";
         }
-        System.out.println("\nFIELDS\n");
         while ((pos = content.indexOf("@CustomMethod")) != -1) {
             int extractionStart = Math.min(Math.max(pos, content.indexOf("{", pos) + 1),
                     Math.max(pos, content.indexOf(";", pos) + 1));
@@ -101,35 +97,33 @@ public class CustomSnippetManager {
             if (!extracted.contains("abstract")) {
                 int bracketsBalance = 1;
                 int curPos = content.indexOf("{", pos);
-                while (bracketsBalance != 0) {
+                while (bracketsBalance > 0) {
                     int nextOpenBracketPos = content.indexOf("{", curPos + 1);
                     int nextCloseBracketPos = content.indexOf("}", curPos + 1);
-                    if (nextOpenBracketPos == -1) {
+                    System.out.println("\nDEBUG: open - " + nextOpenBracketPos + "\t close - " + nextCloseBracketPos
+                            + "\t bal - " + bracketsBalance);
+                    // curPos = Math.min(nextCloseBracketPos, nextOpenBracketPos);
+                    if (nextOpenBracketPos == -1 || nextOpenBracketPos > nextCloseBracketPos) {
+                        bracketsBalance--;
                         curPos = nextCloseBracketPos;
-                        break;
                     } else {
-                        curPos = Math.min(nextCloseBracketPos, nextOpenBracketPos);
-                        if (nextOpenBracketPos > nextCloseBracketPos) {
-                            bracketsBalance--;
-                        } else {
-                            bracketsBalance++;
-                        }
+                        bracketsBalance++;
+                        curPos = nextOpenBracketPos;
                     }
                 }
-                extracted += content.substring(extractionStart, curPos+1);
+                System.out.println("\nCHARAT: " + content.charAt(curPos) + "\n");
+                extracted += content.substring(extractionStart, curPos + 1);
             }
             content = content.replaceFirst("@CustomMethod", "");
             extracted = extracted.replaceAll("\\@CustomMethod()", "").replaceAll("\\@CustomMethod", "");
             processed += "\n" + extracted + "\n";
         }
-        System.out.println("\nMETHODS\n");
         while ((pos = content.indexOf("@CustomEnum")) != -1) {
             String extracted = content.substring(pos, content.indexOf("}", pos) + 1);
             content = content.replaceFirst("@CustomEnum", "");
             extracted = extracted.replaceAll("\\@CustomEnum()", "").replaceAll("\\@CustomEnum", "");
             processed += "\n" + extracted + "\n";
         }
-        System.out.println("\nENUMS\n");
         while ((pos = content.indexOf("@Custom")) != -1) {
             int extractionStart = content.indexOf("{", pos) + 1;
             String extracted = content.substring(pos, extractionStart);
@@ -138,24 +132,20 @@ public class CustomSnippetManager {
             while (bracketsBalance != 0) {
                 int nextOpenBracketPos = content.indexOf("{", curPos + 1);
                 int nextCloseBracketPos = content.indexOf("}", curPos + 1);
-                if (nextOpenBracketPos == -1) {
+                if (nextOpenBracketPos == -1 || nextOpenBracketPos > nextCloseBracketPos) {
+                    bracketsBalance--;
                     curPos = nextCloseBracketPos;
-                    break;
                 } else {
-                    curPos = Math.min(nextCloseBracketPos, nextOpenBracketPos);
-                    if (nextOpenBracketPos > nextCloseBracketPos) {
-                        bracketsBalance--;
-                    } else {
-                        bracketsBalance++;
-                    }
+                    bracketsBalance++;
+                    curPos = nextOpenBracketPos;
                 }
             }
-            extracted += content.substring(extractionStart, curPos+1);
+            extracted += content.substring(extractionStart, curPos + 1);
             content = content.replaceFirst("@Custom", "");
             extracted = extracted.replaceAll("\\@Custom()", "").replaceAll("\\@Custom", "");
             processed += "\n" + extracted + "\n";
         }
-        System.out.println("\nClasses\n");
+        processed += "}";
         return processed;
     }
 
