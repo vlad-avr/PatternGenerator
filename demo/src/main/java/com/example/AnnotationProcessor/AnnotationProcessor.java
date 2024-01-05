@@ -34,7 +34,11 @@ public class AnnotationProcessor extends AbstractProcessor {
         annotations.add("com.example.annotations.type.Singleton");
         annotations.add("com.example.annotations.type.Factory");
         annotations.add("com.example.annotations.type.Decorator");
+        annotations.add("com.example.annotations.type.Custom");
         annotations.add("com.example.annotations.method.ToOverride");
+        annotations.add("com.example.annotations.method.CustomMethod");
+        annotations.add("com.example.annotations.field.CustomField");
+        annotations.add("com.example.annotations.constructor.CustomConstructor");
         // Add more annotation types as needed
         return annotations;
     }
