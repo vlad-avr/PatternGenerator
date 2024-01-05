@@ -1,4 +1,5 @@
 com\example\FactoryTest\Builder.class
+com\example\customTemplateCreatorTest\AnotherTemplate$InnerClass.class
 com\example\dummy\D2Singleton.class
 com\example\FactoryTest\Worker.class
 com\example\pattern\factory\ObjectFactory.class

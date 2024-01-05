@@ -48,4 +48,9 @@ public class AnotherTemplate {
         }
     }
 
+    @Custom
+    class InnerClass{
+        int innerClassVar = 420;
+    }
+
 }

@@ -1,12 +1,12 @@
 package {pkg};
-;
 
 
 
 
 
 
-package com.example.customTemplateCreatorTest
+
+package com.example.customTemplateCreatorTest;
 public class {class} {
 
     private int brainCells = 2;
@@ -48,5 +48,10 @@ public class {class} {
     public static enum LameEnum{
         LAME,
         VERY_LAME,
+    }
+
+
+    class InnerClass{
+        int innerClassVar = 420;
     }
 }
