@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class SnippetLoader {
 
+public class SnippetLoader {
+    
     public static enum PatternCode{
         SC,
         STS,

@@ -5,6 +5,7 @@ D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\D
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\dummy\D1.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\pattern\factory\AnimalFactory.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\App.java
+D:\Java\PatternGenerator\testing_project\src\main\java\com\example\pattern\decorator\AnimalDecorator.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\AnimalInterface.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\Animal.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\pattern\factory\ObjectFactory.java
@@ -14,3 +15,5 @@ D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\B
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\dummy\Dummy.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\Cat.java
 D:\Java\PatternGenerator\testing_project\src\main\java\com\example\FactoryTest\Human.java
+D:\Java\PatternGenerator\testing_project\src\main\java\com\example\pattern\decorator\AnimalInterfaceDecorator.java
+D:\Java\PatternGenerator\testing_project\src\main\java\com\example\customTemplateCreatorTest\CustomTemplate.java

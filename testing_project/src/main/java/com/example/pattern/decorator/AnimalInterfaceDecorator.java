@@ -20,10 +20,5 @@ class AnimalInterfaceDecorator implements AnimalInterface{
 	}
 
 
-	public static int getTwo(){
-		return AnimalInterface.getTwo();
-	}
-
-
 }
 
