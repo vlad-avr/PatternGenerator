@@ -79,19 +79,21 @@ public class CustomSnippetManager {
     }
 
     private static String processClass(String path) throws IOException {
-        System.out.println("PATH DEBUG\t" + path);
         String content = new String(Files.readAllBytes(Paths.get(path)));
         String processed = "";
         processed += content.substring(0, content.indexOf("@Custom"));
         content = content.replaceFirst(processed + "@Custom", "");
         processed += "\n" + content.substring(0, content.indexOf("{") + 1);
         int pos = 0;
+        System.out.println("\nSTART\n");
         while ((pos = content.indexOf("@CustomField")) != -1) {
-            String extracted = content.substring(pos, content.indexOf(";", pos));
-            content.replaceFirst(extracted, "");
+            String extracted = content.substring(pos, content.indexOf(";", pos) + 1);
+            System.out.println(extracted);
+            content = content.replaceFirst("@CustomField", "");
             extracted = extracted.replaceAll("\\@CustomField()", "").replaceAll("\\@CustomField", "");
             processed += "\n" + extracted + "\n";
         }
+        System.out.println("\nFIELDS\n");
         while ((pos = content.indexOf("@CustomMethod")) != -1) {
             int extractionStart = Math.min(Math.max(pos, content.indexOf("{", pos) + 1),
                     Math.max(pos, content.indexOf(";", pos) + 1));
@@ -114,18 +116,20 @@ public class CustomSnippetManager {
                         }
                     }
                 }
-                extracted += content.substring(extractionStart, curPos);
+                extracted += content.substring(extractionStart, curPos+1);
             }
-            content.replaceFirst(extracted, "");
+            content = content.replaceFirst("@CustomMethod", "");
             extracted = extracted.replaceAll("\\@CustomMethod()", "").replaceAll("\\@CustomMethod", "");
             processed += "\n" + extracted + "\n";
         }
+        System.out.println("\nMETHODS\n");
         while ((pos = content.indexOf("@CustomEnum")) != -1) {
-            String extracted = content.substring(pos, content.indexOf("}", pos));
-            content.replaceFirst(extracted, "");
-            extracted.replaceAll("\\@CustomEnum()", "").replaceAll("\\@CustomEnum", "");
+            String extracted = content.substring(pos, content.indexOf("}", pos) + 1);
+            content = content.replaceFirst("@CustomEnum", "");
+            extracted = extracted.replaceAll("\\@CustomEnum()", "").replaceAll("\\@CustomEnum", "");
             processed += "\n" + extracted + "\n";
         }
+        System.out.println("\nENUMS\n");
         while ((pos = content.indexOf("@Custom")) != -1) {
             int extractionStart = content.indexOf("{", pos) + 1;
             String extracted = content.substring(pos, extractionStart);
@@ -146,11 +150,12 @@ public class CustomSnippetManager {
                     }
                 }
             }
-            extracted += content.substring(extractionStart, curPos);
-            content.replaceFirst(extracted, "");
+            extracted += content.substring(extractionStart, curPos+1);
+            content = content.replaceFirst("@Custom", "");
             extracted = extracted.replaceAll("\\@Custom()", "").replaceAll("\\@Custom", "");
             processed += "\n" + extracted + "\n";
         }
+        System.out.println("\nClasses\n");
         return processed;
     }
 
