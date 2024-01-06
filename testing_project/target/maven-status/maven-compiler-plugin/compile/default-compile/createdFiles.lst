@@ -21,9 +21,11 @@ com\example\pattern\factory\ObjectFactory$1.class
 com\example\FactoryTest\Animal.class
 com\example\customTemplateCreatorTest\AnotherTemplate$LameEnum.class
 com\example\FactoryTest\AnimalInterface.class
+snippets\Catalogue.class
 com\example\dummy\D2.class
 com\example\FactoryTest\Human.class
 com\example\customTemplateCreatorTest\AnotherTemplate$CoolEnum.class
 com\example\pattern\factory\AnimalFactory$Option.class
+snippets\Catalogue$Option.class
 com\example\customTemplateCreatorTest\CustomTemplate.class
 com\example\pattern\decorator\AnimalInterfaceDecorator.class

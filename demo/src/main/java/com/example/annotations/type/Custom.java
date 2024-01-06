@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Custom {
     boolean update() default false;
-    boolean localClass() default false;
+    boolean createSnippet() default true;
 }

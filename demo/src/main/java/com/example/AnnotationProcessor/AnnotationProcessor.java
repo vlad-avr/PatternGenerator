@@ -82,8 +82,9 @@ public class AnnotationProcessor extends AbstractProcessor {
                     System.out.println(element + " is an Enum -> SKIPPED");
                     continue;
                 }
-                if(element.getAnnotation(Custom.class).localClass()){
-                    System.out.println(element + " is a local class of another class -> SKIPPED (Mark @Custom(localClass = false) to generate template for this class)");
+                if (!element.getAnnotation(Custom.class).createSnippet()) {
+                    System.out.println(element
+                            + " is not marked for snippet generation -> SKIPPED (Mark @Custom(createSnippet = true) or just @Custom to generate snippet for this class)");
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {
@@ -261,15 +262,26 @@ public class AnnotationProcessor extends AbstractProcessor {
 
         try {
             // Get the package name
-            String packageName = "";
-            if (element.getEnclosingElement() instanceof PackageElement) {
-                packageName = ((PackageElement) element.getEnclosingElement()).getQualifiedName().toString();
-            } else if (element.getEnclosingElement() instanceof TypeElement) {
-                packageName = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
-            }
+            // String packageName = "";
+            // if (element.getEnclosingElement() instanceof PackageElement) {
+            //     packageName = ((PackageElement) element.getEnclosingElement()).getQualifiedName().toString();
+            // } else if (element.getEnclosingElement() instanceof TypeElement) {
+            //     packageName = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
+            // }
 
             // Construct the path to the source file
-            String sourceFilePath = packageName.replace('.', '/') + "/" + element.getSimpleName() + ".java";
+            Element enclosingElement = element;
+            while (!(enclosingElement.getEnclosingElement() instanceof PackageElement)) {
+                enclosingElement = enclosingElement.getEnclosingElement();
+            }
+            String packageName =  ((PackageElement)enclosingElement.getEnclosingElement()).getQualifiedName().toString();
+            String sourceFilePath = packageName.replace('.', '/') + "/" + enclosingElement.getSimpleName() + ".java";
+            // if (element.getAnnotation(Custom.class).localClass()) {
+            //     sourceFilePath = packageName.replace('.', '/') + "/" + element.getSimpleName() + ".java";
+            // } else {
+            //     sourceFilePath = packageName.replace('.', '/') + "/" +
+            //             element.getEnclosingElement().getSimpleName() + ".java";
+            // }
 
             // Get the source file for the specified element
             FileObject fileObject = filer.getResource(StandardLocation.SOURCE_PATH, "", sourceFilePath);
