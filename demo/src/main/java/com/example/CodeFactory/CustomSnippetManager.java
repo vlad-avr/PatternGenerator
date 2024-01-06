@@ -64,7 +64,7 @@ public class CustomSnippetManager {
     private static void writeCatalogue(File catalogueFile) throws FileNotFoundException {
         String content = "package snippets;\n" +
                 "\npublic class Catalogue{\n" +
-                "\tpublic static enum Options{\n" +
+                "\tpublic static enum Option{\n" +
                 "\t\tNull,\n" +
                 "\t}\n" +
                 "}";

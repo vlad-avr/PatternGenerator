@@ -1,7 +1,7 @@
 package snippets;
 
 public class Catalogue{
-	public static enum Options{
+	public static enum Option{
 		CustomTemplate,
 		AnotherTemplate,
 		Null,
