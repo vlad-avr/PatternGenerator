@@ -8,13 +8,54 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 
 import com.example.annotations.type.Custom;
+import com.example.annotations.type.Snippet;
 
 public class CustomSnippetManager {
     private static final String snippetPath = "src/main/java/snippets/";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
+
+
+    public static void loadSnippet(TypeElement element, String pathToClassFile){
+        String content;
+        String classContent;
+        try{
+            content = new String(Files.readAllBytes(Paths.get(snippetPath + element.getAnnotation(Snippet.class).snippet() + "Snippet.txt")));
+        }catch(IOException e){
+            System.out.println("Unable to reach Snippet Record");
+            return;
+        }
+        try {
+            classContent = new String(Files.readAllBytes(Paths.get(pathToClassFile)));
+        } catch (Exception e) {
+            System.out.println("Unable to reach class code");
+            return;
+        }
+        String packageName = ((PackageElement)element.getEnclosingElement()).getQualifiedName().toString();
+        if(packageName == null || packageName.equals("")){
+            content = content.replace("package {pkg};", "");
+        }else{
+            content = content.replace("{pkg}", packageName);
+        }
+        String internal = getContent(classContent);
+        content = content.replace("\\{internal\\}", internal).replaceAll("\\{class\\}", element.getSimpleName().toString());
+        File classFile = new File(pathToClassFile);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
+            writer.println(content);
+        }catch(IOException e){
+            System.out.println("Unable to update class file");
+            return;
+        }
+    }
+
+    private static String getContent(String content){
+        int startPos = content.indexOf("{")+1;
+        int endPos = content.lastIndexOf("}")-1;
+        return content.substring(startPos, endPos);
+    }
 
     public static void saveSnippet(TypeElement element, String pathToClassFile) {
 
@@ -158,7 +199,7 @@ public class CustomSnippetManager {
             extracted = extracted.substring(0, extracted.indexOf("@Custom")) + extracted.substring(extracted.indexOf("\n"));
             processed += "\n" + extracted + "\n";
         }
-        processed += "}";
+        processed += "\n{internal}\n}";
         return processed;
     }
 

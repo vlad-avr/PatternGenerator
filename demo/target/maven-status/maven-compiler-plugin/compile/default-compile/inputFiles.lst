@@ -1,6 +1,7 @@
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Custom.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\codeFactory\CustomSnippetManager.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\codeFactory\PatternFactory.java
+D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Snippet.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\method\ToOverride.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\constructor\CustomConstructor.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\field\CustomField.java

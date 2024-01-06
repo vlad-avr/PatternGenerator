@@ -68,6 +68,35 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
+    private void processSnippet(Set<? extends Element> annotations){
+        for (Element element : annotations) {
+            System.out.println("Found class annotated with @Custom: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> @Snippet cannot be used with Interfaces");
+                    return;
+                }
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> @Snippet cannot be used with Enums");
+                    continue;
+                }
+                if (!(element.getEnclosingElement() instanceof PackageElement)){
+                    System.out.println(element + " is a local class defined in another class (snippet generation for local classes is not supported yet) -> SKIPPED");
+                    continue;
+                }
+                String path = getAbsolutePath(typeElement);
+                if (path != null) {
+                    CustomSnippetManager.loadSnippet(typeElement, path);
+                }
+            } else {
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
+    }
+
     private void processCustom(Set<? extends Element> annotations) {
         for (Element element : annotations) {
             System.out.println("Found class annotated with @Custom: " + element);
