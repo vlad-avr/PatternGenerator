@@ -1,10 +1,8 @@
 package snippets;
 
 public class Catalogue{
-	public static enum Option{
-		CustomTemplate,
-		AnotherTemplate,
-		Null,
-	}
+	//Options
+	 public final static String AnotherTemplate = "AnotherTemplate";
+	 public final static String CustomTemplate = "CustomTemplate";
 }
 

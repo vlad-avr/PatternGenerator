@@ -1,4 +1,4 @@
-package {pkg};
+package com.example.customTemplateCreatorTest;
 
 
 
@@ -8,7 +8,7 @@ package {pkg};
 
 
 
-public class {class} extends Object {
+public class DummyClassWithStuff extends Object {
 
     private int brainCells = 2;
 
@@ -19,12 +19,12 @@ public class {class} extends Object {
     private final String unimportantField = "NOT IMPORTANT";
 
 
-    public {class}(int numberOfBrainCells){
+    public DummyClassWithStuff(int numberOfBrainCells){
         this.brainCells = numberOfBrainCells;
     }
 
 
-    public {class}(){
+    public DummyClassWithStuff(){
         System.out.println("CONSTRUCTING SOMETHING HERE!!!!");
     }
 
@@ -40,5 +40,11 @@ public class {class} extends Object {
         VERY_LAME,
     }
 
-{internal}
+
+    private int two = 2;
+
+    public int getNumber(){
+        return two;
+    }
 }
+

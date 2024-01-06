@@ -41,7 +41,7 @@ public class CustomSnippetManager {
             content = content.replace("{pkg}", packageName);
         }
         String internal = getContent(classContent);
-        content = content.replace("\\{internal\\}", internal).replaceAll("\\{class\\}", element.getSimpleName().toString());
+        content = content.replaceAll("\\{internal\\}", internal).replaceAll("\\{class\\}", element.getSimpleName().toString());
         File classFile = new File(pathToClassFile);
         try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
             writer.println(content);
@@ -105,9 +105,7 @@ public class CustomSnippetManager {
     private static void writeCatalogue(File catalogueFile) throws FileNotFoundException {
         String content = "package snippets;\n" +
                 "\npublic class Catalogue{\n" +
-                "\tpublic static enum Option{\n" +
-                "\t\tNull,\n" +
-                "\t}\n" +
+                "\t//Options\n" +
                 "}";
         PrintWriter writer = new PrintWriter(catalogueFile);
         writer.write(content);
@@ -120,7 +118,7 @@ public class CustomSnippetManager {
             System.out.println(className + " is already in a catalogue.");
             return;
         }
-        content = content.replaceFirst("\t\tNull,\n", "\t\t" + className + ",\n\t\tNull,\n");
+        content = content.replaceFirst("\t//Options\n", "\t//Options\n\t public final static String " + className + " = \""+ className + "\";\n");
         try (PrintWriter writer = new PrintWriter(catalogueFile)) {
             writer.println(content);
         }

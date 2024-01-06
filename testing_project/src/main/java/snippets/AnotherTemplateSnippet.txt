@@ -54,4 +54,6 @@ public class {class} {
     class InnerClass{
         int innerClassVar = 420;
     }
+
+{internal}
 }

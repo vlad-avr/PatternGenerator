@@ -30,6 +30,7 @@ import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
 import com.example.annotations.type.Factory;
 import com.example.annotations.type.Singleton;
+import com.example.annotations.type.Snippet;
 import com.example.codeFactory.CustomSnippetManager;
 import com.example.codeFactory.PatternFactory;
 
@@ -64,6 +65,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         processFactory(roundEnv.getElementsAnnotatedWith(Factory.class));
         processDecorator(roundEnv.getElementsAnnotatedWith(Decorator.class));
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
+        processSnippet(roundEnv.getElementsAnnotatedWith(Snippet.class));
 
         return true;
     }
