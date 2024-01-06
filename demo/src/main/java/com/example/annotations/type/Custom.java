@@ -9,5 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
 public @interface Custom {
-
+    boolean update() default false;
+    boolean localClass() default false;
 }

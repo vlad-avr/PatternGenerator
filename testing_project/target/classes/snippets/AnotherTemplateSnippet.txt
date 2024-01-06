@@ -6,7 +6,7 @@ package {pkg};
 
 
 
-package com.example.customTemplateCreatorTest;
+
 public class {class} {
 
     private int brainCells = 2;

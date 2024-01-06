@@ -10,6 +10,8 @@ import java.nio.file.Paths;
 
 import javax.lang.model.element.TypeElement;
 
+import com.example.annotations.type.Custom;
+
 public class CustomSnippetManager {
     private static final String snippetPath = "src/main/java/snippets/";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
@@ -23,7 +25,7 @@ public class CustomSnippetManager {
                 System.out.println("Package for Custom Templates created: " + catalogueFile.getParentFile());
             }
 
-            if (snippetsFile.createNewFile()) {
+            if (catalogueFile.createNewFile()) {
                 System.out.println("Catalogue of saved Custom Templates created: " + catalogueFile.getAbsolutePath());
                 writeCatalogue(catalogueFile);
             }
@@ -40,6 +42,12 @@ public class CustomSnippetManager {
 
             if (!snippetsFile.exists()) {
                 System.out.println("Snippet file created: " + snippetsFile.getAbsolutePath());
+                snippetsFile.createNewFile();
+            }else{
+                if(element.getAnnotation(Custom.class).update()){
+                    System.out.println(snippetsFile.getAbsolutePath() + " already exists. Set @Custom(update = true) to update snippet on each build");
+                    return;
+                }
             }
             String content = "package {pkg};\n" + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
                     "\\{class\\}");
@@ -89,8 +97,9 @@ public class CustomSnippetManager {
             startPos = content.indexOf(";") + 1;
         }
         processed += content.substring(startPos, content.indexOf("@Custom"));
+
         content = content.replaceFirst(processed + "@Custom", "");
-        processed += "\n" + content.substring(0, content.indexOf("{") + 1);
+        processed += "\n" + content.substring(content.indexOf("\n"), content.indexOf("{") + 1);
         int pos = 0;
         while ((pos = content.indexOf("@CustomField")) != -1) {
             String extracted = content.substring(pos, content.indexOf(";", pos) + 1);

@@ -7,7 +7,7 @@ package {pkg};
 
 
 
-package com.example.customTemplateCreatorTest;
+
 public class {class} extends Object {
 
     private int brainCells = 2;

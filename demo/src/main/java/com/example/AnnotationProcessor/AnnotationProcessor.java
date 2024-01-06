@@ -79,8 +79,11 @@ public class AnnotationProcessor extends AbstractProcessor {
                     return;
                 }
                 if (element.getKind() == ElementKind.ENUM) {
-                    System.out.println(element + "is an Enum -> SKIPPED");
+                    System.out.println(element + " is an Enum -> SKIPPED");
                     continue;
+                }
+                if(element.getAnnotation(Custom.class).localClass()){
+                    System.out.println(element + " is a local class of another class -> SKIPPED (Mark @Custom(localClass = false) to generate template for this class)");
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {
