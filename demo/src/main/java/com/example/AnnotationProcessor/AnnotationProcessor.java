@@ -82,9 +82,14 @@ public class AnnotationProcessor extends AbstractProcessor {
                     System.out.println(element + " is an Enum -> SKIPPED");
                     continue;
                 }
+                if (!(element.getEnclosingElement() instanceof PackageElement)){
+                    System.out.println(element + " is a local class defined in another class (snippet generation for local classes is not supported yet) -> SKIPPED");
+                    continue;
+                }
                 if (!element.getAnnotation(Custom.class).createSnippet()) {
                     System.out.println(element
                             + " is not marked for snippet generation -> SKIPPED (Mark @Custom(createSnippet = true) or just @Custom to generate snippet for this class)");
+                    continue;
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {

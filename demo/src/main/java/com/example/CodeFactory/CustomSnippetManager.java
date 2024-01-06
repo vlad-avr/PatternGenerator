@@ -44,7 +44,7 @@ public class CustomSnippetManager {
                 System.out.println("Snippet file created: " + snippetsFile.getAbsolutePath());
                 snippetsFile.createNewFile();
             }else{
-                if(element.getAnnotation(Custom.class).update()){
+                if(!element.getAnnotation(Custom.class).update()){
                     System.out.println(snippetsFile.getAbsolutePath() + " already exists. Set @Custom(update = true) to update snippet on each build");
                     return;
                 }
@@ -155,7 +155,7 @@ public class CustomSnippetManager {
             }
             extracted += content.substring(extractionStart, curPos + 1);
             content = content.replaceFirst("@Custom", "");
-            extracted = extracted.replaceAll("\\@Custom()", "").replaceAll("\\@Custom", "");
+            extracted = extracted.substring(0, extracted.indexOf("@Custom")) + extracted.substring(extracted.indexOf("\n"));
             processed += "\n" + extracted + "\n";
         }
         processed += "}";

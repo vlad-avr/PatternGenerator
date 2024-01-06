@@ -4,7 +4,7 @@ import com.example.annotations.field.CustomField;
 import com.example.annotations.method.CustomMethod;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.CustomEnum;
-@Custom(update = false)
+@Custom(update = true)
 public class AnotherTemplate {
     @CustomField
     private int brainCells = 2;
@@ -48,7 +48,7 @@ public class AnotherTemplate {
         }
     }
 
-    @Custom
+    @Custom(createSnippet = true)
     class InnerClass{
         int innerClassVar = 420;
     }
