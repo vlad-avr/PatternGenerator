@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 public @interface Custom {
     boolean update() default false;
     boolean createSnippet() default true;
+    String name() default "-";
 }

@@ -58,8 +58,11 @@ public class CustomSnippetManager {
     }
 
     public static void saveSnippet(TypeElement element, String pathToClassFile) {
-
-        File snippetsFile = new File(snippetPath + element.getSimpleName() + "Snippet.txt");
+        String snippetName;
+        if((snippetName = element.getAnnotation(Custom.class).name()).equals("-")){
+            snippetName = element.getSimpleName().toString();
+        }
+        File snippetsFile = new File(snippetPath + snippetName + "Snippet.txt");
         File catalogueFile = new File(cataloguePath);
         try {
             if (catalogueFile.getParentFile().mkdirs()) {
@@ -70,7 +73,7 @@ public class CustomSnippetManager {
                 System.out.println("Catalogue of saved Custom Templates created: " + catalogueFile.getAbsolutePath());
                 writeCatalogue(catalogueFile);
             }
-            addOption(element.getSimpleName().toString(), catalogueFile);
+            addOption(snippetName, catalogueFile);
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -114,7 +117,7 @@ public class CustomSnippetManager {
 
     private static void addOption(String className, File catalogueFile) throws IOException {
         String content = new String(Files.readAllBytes(Paths.get(cataloguePath)));
-        if (content.contains(className)) {
+        if (content.contains("String " + className)) {
             System.out.println(className + " is already in a catalogue.");
             return;
         }

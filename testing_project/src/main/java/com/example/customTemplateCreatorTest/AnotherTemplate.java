@@ -4,7 +4,7 @@ import com.example.annotations.field.CustomField;
 import com.example.annotations.method.CustomMethod;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.CustomEnum;
-@Custom(update = true)
+@Custom(update = true, name = "TestTemplate")
 public class AnotherTemplate {
     @CustomField
     private int brainCells = 2;
