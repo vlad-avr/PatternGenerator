@@ -29,6 +29,7 @@ import com.example.annotations.method.ToOverride;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
 import com.example.annotations.type.Factory;
+import com.example.annotations.type.MakeInterface;
 import com.example.annotations.type.Singleton;
 import com.example.annotations.type.Snippet;
 import com.example.codeFactory.CustomSnippetManager;
@@ -42,7 +43,9 @@ public class AnnotationProcessor extends AbstractProcessor {
         annotations.add("com.example.annotations.type.Singleton");
         annotations.add("com.example.annotations.type.Factory");
         annotations.add("com.example.annotations.type.Decorator");
+        annotations.add("com.example.annotations.type.MakeInterface");
         annotations.add("com.example.annotations.type.Custom");
+        annotations.add("com.example.annotations.type.Snippet");
         annotations.add("com.example.annotations.type.Enum");
         annotations.add("com.example.annotations.method.ToOverride");
         annotations.add("com.example.annotations.method.CustomMethod");
@@ -62,17 +65,47 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nPROCESSOR WORKING!");
 
         processSingleton(roundEnv.getElementsAnnotatedWith(Singleton.class));
+        System.out.println("\nAll elements with @Singleton processed\n");
         processFactory(roundEnv.getElementsAnnotatedWith(Factory.class));
+        System.out.println("\nAll elements with @Factory processed\n");
         processDecorator(roundEnv.getElementsAnnotatedWith(Decorator.class));
+        System.out.println("\nAll elements with @Decorator processed\n");
+        processInterfaceMakers(roundEnv.getElementsAnnotatedWith(MakeInterface.class));
+        System.out.println("\nAll elements with @MakeInterface processed\n");
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
+        System.out.println("\nAll elements with @Custom processed\n");
         processSnippet(roundEnv.getElementsAnnotatedWith(Snippet.class));
+        System.out.println("\nAll elements with @Snippet processed\n");
 
         return true;
     }
 
+    private void processInterfaceMakers(Set<? extends Element> annotations){
+        for (Element element : annotations) {
+            System.out.println("Found class annotated with @MakeInterface: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> cannot make interface from Interface");
+                    return;
+                }
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> cannot be turned into Interface");
+                    continue;
+                }
+                String curPackage = element.getAnnotation(MakeInterface.class).pkg();
+                PatternFactory.makeInterface(typeElement, getMethods(typeElement, null), curPackage);
+            } else {
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
+    }
+
     private void processSnippet(Set<? extends Element> annotations){
         for (Element element : annotations) {
-            System.out.println("Found class annotated with @Custom: " + element);
+            System.out.println("Found class annotated with @Snippet: " + element);
             if (element instanceof TypeElement) {
                 // If the element is a class
                 TypeElement typeElement = (TypeElement) element;
@@ -157,7 +190,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 ExecutableElement methodElement = (ExecutableElement) enclosedElement;
 
                 // Check if the method is annotated with the specified annotation
-                if (isAnnotationPresent(methodElement, annotation)) {
+                if (annotation == null || isAnnotationPresent(methodElement, annotation)) {
                     markedMethods.add(methodElement);
                 }
             }
@@ -236,6 +269,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         Map<String, Integer> factoryMap = new HashMap<>();
         List<List<TypeElement>> factories = new ArrayList<>();
         for (Element element : annotations) {
+            System.out.println("Found class annotated with @Factory: " + element);
             TypeElement typeElement = (TypeElement) element;
             String factoryId = typeElement.getAnnotation(Factory.class).id();
             //System.out.println("\n : " + typeElement.getSimpleName() + " : " + typeElement.getAnnotation(Factory.class).pkg());

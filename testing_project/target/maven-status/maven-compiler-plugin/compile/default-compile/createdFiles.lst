@@ -27,6 +27,9 @@ snippets\Catalogue.class
 com\example\dummy\D2.class
 com\example\FactoryTest\Human.class
 com\example\customTemplateCreatorTest\AnotherTemplate$CoolEnum.class
+com\example\customTemplateCreatorTest\DummyClass$InnerClass.class
+com\example\customTemplateCreatorTest\DummyClass$LameEnum.class
+com\example\customTemplateCreatorTest\DummyClass$CoolEnum.class
 cock\balls\torture\ObjectFactory.class
 pattern\singleton\D2Singleton.class
 com\example\customTemplateCreatorTest\CustomTemplate.class

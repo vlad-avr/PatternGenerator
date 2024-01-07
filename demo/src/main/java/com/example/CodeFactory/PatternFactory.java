@@ -15,9 +15,83 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
 import com.example.annotations.type.Factory;
+import com.example.annotations.type.MakeInterface;
 import com.example.codeFactory.SnippetLoader.PatternCode;
 
 public class PatternFactory {
+
+    public static void makeInterface(TypeElement clazz, List<ExecutableElement> methods, String packagePath){
+        String packageName = getPackageName(packagePath, "interfaces");
+        String filePath = "/";
+        if (!packagePath.equals("")) {
+            filePath += packageName.replace(".", "/") + "/";
+        }
+        String name;
+        if((name = clazz.getAnnotation(MakeInterface.class).name()).equals("-")){
+            name = clazz.getSimpleName() + "Interface";
+        }
+        File file = new File("src/main/java" + filePath + name + ".java");
+        try {
+            if (file.getParentFile().mkdirs()) {
+                System.out.println("Directory created: " + file.getParentFile());
+            }
+
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getAbsolutePath());
+                String content;
+                content = SnippetLoader.loadPatternSnippet(PatternCode.I);
+                if (content != null && !content.equals("")) {
+                    System.out.println("Interace code snippet loaded successfully!");
+                } else {
+                    System.out.println("Interface code snippet could not be loaded");
+                    return;
+                }
+                // System.out.println("\nDEBUG : \n" + content + "\n");
+                content = content.replaceAll("\\{base\\}", name);
+                if (packagePath.equals("")) {
+                    content = content.replaceAll("\\{path\\};", "");
+                } else {
+                    content = content.replaceAll("\\{path\\}", "package " + packageName);
+                }
+                String methodStr = "";
+                for (ExecutableElement method : methods) {
+                    Set<Modifier> modifiers = method.getModifiers();
+                    if (modifiers.contains(Modifier.STATIC) || modifiers.contains(Modifier.PRIVATE) || modifiers.contains(Modifier.PROTECTED)) {
+                        continue;
+                    }
+                    methodStr += "\n\t";
+                    String modString = "";
+                    for (Modifier mod : modifiers) {
+                        if (!mod.equals(Modifier.ABSTRACT)) {
+                            modString += mod.name().toLowerCase() + " ";
+                        }
+                    }
+                    methodStr += modString + method.getReturnType() + " " + method.getSimpleName() + "(";
+                    List<? extends VariableElement> parameters = method.getParameters();
+                    for (int i = 0; i < parameters.size(); i++) {
+                        String parameterName = parameters.get(i).getSimpleName().toString();
+                        TypeMirror parameterType = parameters.get(i).asType();
+                        methodStr += parameterType + " " + parameterName;
+                        if (i != parameters.size() - 1) {
+                            methodStr += ", ";
+                        }
+                    }
+                    methodStr += ");";
+                }
+
+                content = content.replaceAll("\\{methods\\}", methodStr);
+
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.println(content);
+                }
+                System.out.println("Content written to the file.");
+            } else {
+                System.out.println(file.getAbsolutePath() + " already exists.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void makeDecorator(TypeElement base, List<ExecutableElement> methods, String packagePath) {
         String packageName = getPackageName(packagePath, "decorator");

@@ -12,7 +12,8 @@ public class SnippetLoader {
         SC,
         STS,
         F,
-        D
+        D,
+        I
     }
 
     private static final String patternPath = "/PatternSnippets.txt";
@@ -35,7 +36,9 @@ public class SnippetLoader {
                 break;
             case D:
                 res = readChunk(PatternCode.D.toString(), "~", reader);
-                break;        
+                break;
+            case I:
+                res = readChunk(PatternCode.I.toString(), "~", reader);        
             default:
                 break;
         }
