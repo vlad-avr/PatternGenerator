@@ -235,14 +235,14 @@ public class AnnotationProcessor extends AbstractProcessor {
     private void processFactory(Set<? extends Element> annotations) {
         Map<String, Integer> factoryMap = new HashMap<>();
         List<List<TypeElement>> factories = new ArrayList<>();
-        String curPackage = null;
         for (Element element : annotations) {
             TypeElement typeElement = (TypeElement) element;
             String factoryId = typeElement.getAnnotation(Factory.class).id();
-            String tmp = typeElement.getAnnotation(Factory.class).pkg();
-            if (!tmp.equals("-")) {
-                curPackage = tmp;
-            }
+            //System.out.println("\n : " + typeElement.getSimpleName() + " : " + typeElement.getAnnotation(Factory.class).pkg());
+            //String tmp = typeElement.getAnnotation(Factory.class).pkg();
+            // if (!tmp.equals(curPackage) && !tmp.equals("-")) {
+            //     curPackage = tmp;
+            // }
             if (factoryMap.containsKey(factoryId)) {
                 factories.get(factoryMap.get(factoryId)).add(typeElement);
             } else {
@@ -255,7 +255,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         if (factories.size() != 0) {
             for (List<TypeElement> factoryElems : factories) {
                 TypeElement parentElem = getCommonParent(factoryElems);
-                PatternFactory.makeFactory(parentElem, factoryElems, curPackage);
+                PatternFactory.makeFactory(parentElem, factoryElems);
             }
         }
     }

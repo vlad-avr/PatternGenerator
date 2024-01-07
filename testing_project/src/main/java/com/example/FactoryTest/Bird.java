@@ -2,7 +2,7 @@ package com.example.FactoryTest;
 
 import com.example.annotations.type.Factory;
 
-@Factory(id = "F-1", pkg = "com.example.pattern.factory")
+@Factory(id = "F-1")
 public class Bird extends Animal{
     
 }

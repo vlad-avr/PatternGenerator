@@ -1,4 +1,4 @@
-package com.example.pattern.factory;
+package cock.balls.torture;
 
 import java.lang.Object;
 import com.example.FactoryTest.Human;

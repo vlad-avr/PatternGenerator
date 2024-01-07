@@ -1,4 +1,4 @@
-package com.example.pattern.factory;
+package pattern.factory;
 
 import com.example.FactoryTest.Animal;
 import com.example.FactoryTest.Bird;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
@@ -15,6 +16,7 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import com.example.annotations.type.Factory;
 import com.example.codeFactory.SnippetLoader.PatternCode;
 
 public class PatternFactory {
@@ -173,20 +175,30 @@ public class PatternFactory {
         }
     }
 
-    public static void makeFactory(TypeElement parent, List<TypeElement> children, String packagePath) {
+    public static void makeFactory(TypeElement parent, List<TypeElement> children) {
         if (children == null || children.size() == 0) {
             return;
         }
+        String packagePath = "-";
+        for (TypeElement element : children) {
+            System.out.println("\n : " + element.getSimpleName() + " : " + element.getAnnotation(Factory.class).pkg());
+            String tmp = element.getAnnotation(Factory.class).pkg();
+            if (!tmp.equals(packagePath) && !tmp.equals("-")) {
+                packagePath = tmp;
+            }
+        }
         String packageName = "";
-        String filePath = "";
-        if (packagePath.equals("-")) {
-            PackageElement pkg = (PackageElement) children.get(0).getEnclosingElement();
-            packageName = pkg.getQualifiedName().toString();
+        String filePath = "/";
+        //System.out.println("\n\nDEBUG : " + packagePath);
+        if (packagePath == null || packagePath.equals("-")) {
+            packageName = "pattern.factory";
         } else {
             packageName = packagePath;
         }
-        filePath = packageName.replace(".", "/");
-        File file = new File("src/main/java/" + filePath + "/" + parent.getSimpleName() + "Factory.java");
+        if(!packagePath.equals("")){
+            filePath += packageName.replace(".", "/") + "/";
+        }
+        File file = new File("src/main/java" + filePath + parent.getSimpleName() + "Factory.java");
         try {
             if (file.getParentFile().mkdirs()) {
                 System.out.println("Directory created: " + file.getParentFile());
@@ -211,9 +223,12 @@ public class PatternFactory {
                 }
                 content = content.replaceAll("\\{factory\\}", parent.getSimpleName() + "Factory")
                         .replaceAll("\\{options\\}", enumOptions)
-                        .replaceAll("\\{parent\\}", parent.getSimpleName().toString())
-                        .replaceAll("\\{path\\}", "package " + packageName);
-
+                        .replaceAll("\\{parent\\}", parent.getSimpleName().toString());
+                if(packagePath.equals("")){
+                    content = content.replaceAll("\\{path\\};","");
+                }else{
+                    content = content.replaceAll("\\{path\\}", "package " + packageName);
+                }
                 String cases = "";
                 for (int i = 0; i < children.size(); i++) {
                     cases += "\t\t\tcase " + options.get(i) + ":\n\t\t\t\treturn new "
