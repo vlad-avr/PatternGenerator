@@ -1,4 +1,4 @@
-package com.example.dummy;
+package pattern.singleton;
 
 import com.example.dummy.D2;
 

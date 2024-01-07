@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
@@ -22,16 +20,12 @@ import com.example.codeFactory.SnippetLoader.PatternCode;
 public class PatternFactory {
 
     public static void makeDecorator(TypeElement base, List<ExecutableElement> methods, String packagePath) {
-        String packageName = "";
-        String filePath = "";
-        if (packagePath.equals("-")) {
-            PackageElement pkg = (PackageElement) base.getEnclosingElement();
-            packageName = pkg.getQualifiedName().toString();
-        } else {
-            packageName = packagePath;
+        String packageName = getPackageName(packagePath, "decorator");
+        String filePath = "/";
+        if (!packagePath.equals("")) {
+            filePath += packageName.replace(".", "/") + "/";
         }
-        filePath = packageName.replace(".", "/");
-        File file = new File("src/main/java/" + filePath + "/" + base.getSimpleName() + "Decorator.java");
+        File file = new File("src/main/java" + filePath + base.getSimpleName() + "Decorator.java");
         boolean isInterface = base.getKind().isInterface();
         try {
             if (file.getParentFile().mkdirs()) {
@@ -50,7 +44,8 @@ public class PatternFactory {
                 }
                 String imports = "import " + base.getQualifiedName() + ";";
                 if (isInterface) {
-                    content = content.replaceAll("\\{interface_ref\\}", "protected {base} decorated{base};").replaceAll("\\{constr_arg\\}", "{base} obj")
+                    content = content.replaceAll("\\{interface_ref\\}", "protected {base} decorated{base};")
+                            .replaceAll("\\{constr_arg\\}", "{base} obj")
                             .replaceAll("\\{constr_body\\}", "this.decorated{base} = obj;")
                             .replaceAll("\\{inheritance\\}", "implements");
                 } else {
@@ -61,7 +56,12 @@ public class PatternFactory {
                 }
                 content = content.replaceAll("\\{base\\}", base.getSimpleName().toString())
                         .replaceAll("\\{decor\\}", base.getSimpleName() + "Decorator")
-                        .replaceAll("\\{path\\}", "package " + packageName).replaceAll("\\{imports\\}", imports);
+                        .replaceAll("\\{imports\\}", imports);
+                if (packagePath.equals("")) {
+                    content = content.replaceAll("\\{path\\};", "");
+                } else {
+                    content = content.replaceAll("\\{path\\}", "package " + packageName);
+                }
                 String overrides = "";
                 for (ExecutableElement method : methods) {
                     Set<Modifier> modifiers = method.getModifiers();
@@ -128,16 +128,12 @@ public class PatternFactory {
     }
 
     public static void makeSingleton(TypeElement clazz, boolean threadSafe, String packagePath) {
-        String packageName = "";
-        String filePath = "";
-        if (packagePath.equals("-")) {
-            PackageElement pkg = (PackageElement) clazz.getEnclosingElement();
-            packageName = pkg.getQualifiedName().toString();
-        } else {
-            packageName = packagePath;
+        String packageName = getPackageName(packagePath, "singleton");
+        String filePath = "/";
+        if (!packagePath.equals("")) {
+            filePath += packageName.replace(".", "/") + "/";
         }
-        filePath = packageName.replace(".", "/");
-        File file = new File("src/main/java/" + filePath + "/" + clazz.getSimpleName() + "Singleton.java");
+        File file = new File("src/main/java" + filePath + clazz.getSimpleName() + "Singleton.java");
         try {
             if (file.getParentFile().mkdirs()) {
                 System.out.println("Directory created: " + file.getParentFile());
@@ -158,8 +154,12 @@ public class PatternFactory {
                     return;
                 }
                 content = content.replaceAll("\\{class\\}", clazz.getSimpleName().toString())
-                        .replaceAll("\\{singleton\\}", clazz.getSimpleName() + "Singleton")
-                        .replaceAll("\\{path\\}", "package " + packageName);
+                        .replaceAll("\\{singleton\\}", clazz.getSimpleName() + "Singleton");
+                if (packagePath.equals("")) {
+                    content = content.replaceAll("\\{path\\};", "");
+                } else {
+                    content = content.replaceAll("\\{path\\}", "package " + packageName);
+                }
                 String imports = "import " + clazz.getQualifiedName() + ";";
                 content = content.replaceAll("\\{imports\\}", imports);
                 try (PrintWriter writer = new PrintWriter(file)) {
@@ -186,15 +186,9 @@ public class PatternFactory {
                 packagePath = tmp;
             }
         }
-        String packageName = "";
+        String packageName = getPackageName(packagePath, "factory");
         String filePath = "/";
-        //System.out.println("\n\nDEBUG : " + packagePath);
-        if (packagePath == null || packagePath.equals("-")) {
-            packageName = "pattern.factory";
-        } else {
-            packageName = packagePath;
-        }
-        if(!packagePath.equals("")){
+        if (!packagePath.equals("")) {
             filePath += packageName.replace(".", "/") + "/";
         }
         File file = new File("src/main/java" + filePath + parent.getSimpleName() + "Factory.java");
@@ -217,7 +211,7 @@ public class PatternFactory {
                 String enumOptions = "";
                 for (TypeElement c : children) {
                     String str;
-                    if((str = c.getAnnotation(Factory.class).option()).equals("-")){
+                    if ((str = c.getAnnotation(Factory.class).option()).equals("-")) {
                         str = c.getSimpleName().toString();
                     }
                     options.add(str.toUpperCase());
@@ -226,9 +220,9 @@ public class PatternFactory {
                 content = content.replaceAll("\\{factory\\}", parent.getSimpleName() + "Factory")
                         .replaceAll("\\{options\\}", enumOptions)
                         .replaceAll("\\{parent\\}", parent.getSimpleName().toString());
-                if(packagePath.equals("")){
-                    content = content.replaceAll("\\{path\\};","");
-                }else{
+                if (packagePath.equals("")) {
+                    content = content.replaceAll("\\{path\\};", "");
+                } else {
                     content = content.replaceAll("\\{path\\}", "package " + packageName);
                 }
                 String cases = "";
@@ -253,6 +247,17 @@ public class PatternFactory {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static String getPackageName(String packagePath, String defaultPkg) {
+        String packageName = "";
+        // System.out.println("\n\nDEBUG : " + packagePath);
+        if (packagePath == null || packagePath.equals("-")) {
+            packageName = "pattern." + defaultPkg;
+        } else {
+            packageName = packagePath;
+        }
+        return packageName;
     }
 
 }
