@@ -217,7 +217,10 @@ public class PatternFactory {
                 List<String> options = new ArrayList<>();
                 String enumOptions = "";
                 for (TypeElement c : children) {
-                    String str = c.getSimpleName().toString();
+                    String str;
+                    if((str = c.getAnnotation(Factory.class).option()).equals("-")){
+                        str = c.getSimpleName().toString();
+                    }
                     options.add(str.toUpperCase());
                     enumOptions += "\t\t" + str.toUpperCase() + ",\n";
                 }

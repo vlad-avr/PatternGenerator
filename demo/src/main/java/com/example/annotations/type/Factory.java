@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface Factory {
     String id();
     String pkg() default "-";
+    String option() default "-";
 }

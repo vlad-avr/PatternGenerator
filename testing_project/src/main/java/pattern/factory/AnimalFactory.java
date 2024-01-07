@@ -8,19 +8,19 @@ import com.example.FactoryTest.Cat;
 class AnimalFactory{
 
     public static enum Option{
-		BIRD,
-		DOG,
-		CAT,
+		FIREBIRD,
+		WHO_LET_THE_DOGS_OUT,
+		PUSSY,
 
     }
 
     public static Animal makeAnimal(Option option){
         switch(option){
-			case BIRD:
+			case FIREBIRD:
 				return new Bird();
-			case DOG:
+			case WHO_LET_THE_DOGS_OUT:
 				return new Dog();
-			case CAT:
+			case PUSSY:
 				return new Cat();
 
             default:
