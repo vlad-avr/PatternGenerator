@@ -181,7 +181,6 @@ public class PatternFactory {
         }
         String packagePath = "-";
         for (TypeElement element : children) {
-            System.out.println("\n : " + element.getSimpleName() + " : " + element.getAnnotation(Factory.class).pkg());
             String tmp = element.getAnnotation(Factory.class).pkg();
             if (!tmp.equals(packagePath) && !tmp.equals("-")) {
                 packagePath = tmp;
