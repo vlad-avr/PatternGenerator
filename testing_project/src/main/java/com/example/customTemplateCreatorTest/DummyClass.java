@@ -1,9 +1,15 @@
 package com.example.customTemplateCreatorTest;
 
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 
+
+
+
+import java.lang.String;
 
 
 
@@ -13,6 +19,9 @@ public class DummyClass {
 
 
     public static final String msg = "Bismark";
+
+
+    public List<String> stringList = new ArrayList<>();
 
 
     public DummyClass(int numberOfBrainCells){
@@ -56,6 +65,6 @@ public class DummyClass {
     }
 
 
-    
+
 }
 

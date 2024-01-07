@@ -1,15 +1,23 @@
 package com.example.customTemplateCreatorTest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.example.annotations.field.CustomField;
 import com.example.annotations.method.CustomMethod;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.CustomEnum;
+
+import java.lang.String;
+
 @Custom(update = true, name = "TestTemplate")
 public class AnotherTemplate {
     @CustomField
     private int brainCells = 2;
     @CustomField
     public static final String msg = "Bismark";
+    @CustomField
+    public List<String> stringList = new ArrayList<>();
 
     private final String unimportantField = "NOT IMPORTANT";
 
