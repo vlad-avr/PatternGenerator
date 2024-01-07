@@ -25,7 +25,9 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import com.example.annotations.field.ToBuild;
 import com.example.annotations.method.ToOverride;
+import com.example.annotations.type.Builder;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
 import com.example.annotations.type.Factory;
@@ -72,12 +74,37 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @Decorator processed\n");
         processInterfaceMakers(roundEnv.getElementsAnnotatedWith(MakeInterface.class));
         System.out.println("\nAll elements with @MakeInterface processed\n");
+        processBuilders(roundEnv.getElementsAnnotatedWith(Builder.class));
+        System.out.println("\nAll elements with @Builder processed\n");
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
         System.out.println("\nAll elements with @Custom processed\n");
         processSnippet(roundEnv.getElementsAnnotatedWith(Snippet.class));
         System.out.println("\nAll elements with @Snippet processed\n");
 
         return true;
+    }
+
+    private void processBuilders(Set<? extends Element> annotations){
+        for (Element element : annotations) {
+            System.out.println("Found class annotated with @Builder: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> cannot be built with Builder");
+                    return;
+                }
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> cannot be built with Builder");
+                    continue;
+                }
+                String curPackage = element.getAnnotation(Builder.class).pkg();
+                PatternFactory.makeBuilderInterface(typeElement, getFields(typeElement, ToBuild.class), curPackage);
+            } else {
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
     }
 
     private void processInterfaceMakers(Set<? extends Element> annotations){
@@ -208,7 +235,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 VariableElement fieldElement = (VariableElement) enclosedElement;
 
                 // Check if the method is annotated with the specified annotation
-                if (isAnnotationPresent(fieldElement, annotation)) {
+                if (annotation == null || isAnnotationPresent(fieldElement, annotation)) {
                     markedFields.add(fieldElement);
                 }
             }
@@ -225,7 +252,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 ExecutableElement constructorElement = (ExecutableElement) enclosedElement;
 
                 // Check if the method is annotated with the specified annotation
-                if (isAnnotationPresent(constructorElement, annotation)) {
+                if (annotation == null || isAnnotationPresent(constructorElement, annotation)) {
                     markedConstructors.add(constructorElement);
                 }
             }

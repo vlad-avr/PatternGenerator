@@ -14,11 +14,73 @@ import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 
+import com.example.annotations.field.ToBuild;
+import com.example.annotations.type.Builder;
 import com.example.annotations.type.Factory;
 import com.example.annotations.type.MakeInterface;
 import com.example.codeFactory.SnippetLoader.PatternCode;
 
 public class PatternFactory {
+
+    public static void makeBuilderInterface(TypeElement clazz, List<VariableElement> fields, String packagePath){
+        String packageName = getPackageName(packagePath, "builders");
+        String filePath = "/";
+        if (!packagePath.equals("")) {
+            filePath += packageName.replace(".", "/") + "/";
+        }
+        String name;
+        if((name = clazz.getAnnotation(Builder.class).name()).equals("-")){
+            name = clazz.getSimpleName() + "BuilderInterface";
+        }
+        File file = new File("src/main/java" + filePath + name + ".java");
+        try {
+            if (file.getParentFile().mkdirs()) {
+                System.out.println("Directory created: " + file.getParentFile());
+            }
+
+            if (file.createNewFile()) {
+                System.out.println("File created: " + file.getAbsolutePath());
+                String content;
+                content = SnippetLoader.loadPatternSnippet(PatternCode.I);
+                if (content != null && !content.equals("")) {
+                    System.out.println("Interace code snippet loaded successfully!");
+                } else {
+                    System.out.println("Interface code snippet could not be loaded");
+                    return;
+                }
+                // System.out.println("\nDEBUG : \n" + content + "\n");
+                content = content.replaceAll("\\{base\\}", name);
+                if (packagePath.equals("")) {
+                    content = content.replaceAll("\\{path\\};", "");
+                } else {
+                    content = content.replaceAll("\\{path\\}", "package " + packageName);
+                }
+                String methodStr = "public void reset();\n";
+                for(VariableElement field : fields){
+                    if(field.getAnnotation(ToBuild.class) == null){
+                        continue;
+                    }
+                    Set<Modifier> modifiers = field.getModifiers();
+                    if(modifiers.contains(Modifier.STATIC) || modifiers.contains(Modifier.FINAL)){
+                        continue;
+                    }
+                    String fieldName = field.getSimpleName().toString();
+                    fieldName = fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+                    methodStr += "\tpublic void set" + fieldName + "(" + field.asType() + " val);\n";
+                }
+                content = content.replaceAll("\\{methods\\}", methodStr);
+
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    writer.println(content);
+                }
+                System.out.println("Content written to the file.");
+            } else {
+                System.out.println(file.getAbsolutePath() + " already exists.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void makeInterface(TypeElement clazz, List<ExecutableElement> methods, String packagePath){
         String packageName = getPackageName(packagePath, "interfaces");

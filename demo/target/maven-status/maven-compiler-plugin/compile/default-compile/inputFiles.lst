@@ -12,4 +12,6 @@ D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Factory
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotationProcessor\AnnotationProcessor.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\method\CustomMethod.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Decorator.java
+D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\field\ToBuild.java
+D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Builder.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Singleton.java
