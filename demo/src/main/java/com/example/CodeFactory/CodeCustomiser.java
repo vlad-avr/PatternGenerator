@@ -62,7 +62,7 @@ public class CodeCustomiser {
                 enclosing = enclosing.getEnclosingElement();
             }
             String toWrite = "\n";
-            for (int i = 0; i < fieldMap.size(); i++) {
+            for (Integer i : fieldMap.keySet()) {
                 toWrite += tabulation + "public " + element.getSimpleName() + "(";
                 List<VariableElement> fieldsToConstruct = fieldMap.get(i);
                 String constructorBody = "{\n";
@@ -86,6 +86,7 @@ public class CodeCustomiser {
                 System.out.println("Unable to update class file");
                 return;
             }
+            System.out.println("Content written to the file.");
         } catch (Exception e) {
             System.out.println("ERROR : " + e.getMessage());
         }
@@ -153,6 +154,7 @@ public class CodeCustomiser {
             System.out.println("Unable to update class file");
             return;
         }
+        System.out.println("Content written to the file.");
     }
 
     private static Map<Integer, List<VariableElement>> getFieldMap(TypeElement element) {

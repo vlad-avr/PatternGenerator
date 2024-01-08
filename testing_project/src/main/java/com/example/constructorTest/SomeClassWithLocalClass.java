@@ -13,12 +13,20 @@ public class SomeClassWithLocalClass {
     private String name;
     private int age;
 
-    @MakeConstructor
+    
     class LocalClass{
+		public LocalClass(java.lang.String localName){
+			this.localName = localName;
+		}
+		public LocalClass(int localAge){
+			this.localAge = localAge;
+		}
+
         @ToConstruct(id = {1})
         private String localName;
         @ToConstruct(id = {2})
         private int localAge;
     }
 }
+
 
