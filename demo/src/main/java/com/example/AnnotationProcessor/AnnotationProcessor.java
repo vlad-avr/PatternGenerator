@@ -39,23 +39,26 @@ import com.example.codeFactory.PatternFactory;
 
 public class AnnotationProcessor extends AbstractProcessor {
 
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> annotations = new HashSet<>();
-        annotations.add("com.example.annotations.type.Singleton");
-        annotations.add("com.example.annotations.type.Factory");
-        annotations.add("com.example.annotations.type.Decorator");
-        annotations.add("com.example.annotations.type.MakeInterface");
-        annotations.add("com.example.annotations.type.Custom");
-        annotations.add("com.example.annotations.type.Snippet");
-        annotations.add("com.example.annotations.type.Enum");
-        annotations.add("com.example.annotations.method.ToOverride");
-        annotations.add("com.example.annotations.method.CustomMethod");
-        annotations.add("com.example.annotations.field.CustomField");
-        annotations.add("com.example.annotations.constructor.CustomConstructor");
-        // Add more annotation types as needed
-        return annotations;
-    }
+    // @Override
+    // public Set<String> getSupportedAnnotationTypes() {
+    //     Set<String> annotations = new HashSet<>();
+    //     annotations.add("com.example.annotations.type.Singleton");
+    //     annotations.add("com.example.annotations.type.Factory");
+    //     annotations.add("com.example.annotations.type.Decorator");
+    //     annotations.add("com.example.annotations.type.MakeInterface");
+    //     annotations.add("com.example.annotations.type.Custom");
+    //     annotations.add("com.example.annotations.type.Snippet");
+    //     annotations.add("com.example.annotations.type.Enum");
+    //     annotations.add("com.example.annotations.type.MakeConstructor");
+    //     annotations.add("com.example.annotations.method.ToOverride");
+    //     annotations.add("com.example.annotations.method.CustomMethod");
+    //     annotations.add("com.example.annotations.field.CustomField");
+    //     annotations.add("com.example.annotations.field.ToBuild");
+    //     annotations.add("com.example.annotations.field.ToConstruct");
+    //     annotations.add("com.example.annotations.constructor.CustomConstructor");
+    //     // Add more annotation types as needed
+    //     return annotations;
+    // }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
