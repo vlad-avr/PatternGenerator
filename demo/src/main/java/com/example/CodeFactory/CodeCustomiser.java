@@ -7,59 +7,186 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.TypeMirror;
 
+import com.example.annotations.field.ToConstruct;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Snippet;
 
-public class CustomSnippetManager {
+public class CodeCustomiser {
     private static final String snippetPath = "src/main/java/snippets/";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
 
+    public static void makeConstructors(TypeElement element, String pathToClassFile) {
+        Map<Integer, List<VariableElement>> fieldMap = getFieldMap(element);
+        if (fieldMap.isEmpty()) {
+            System.out.println("No Fields found to make constructor of.");
+            return;
+        }
+        File classFile = new File(pathToClassFile);
+        try {
+            String originalContent = readAllContent(pathToClassFile);
+            int substrPos;
+            originalContent = originalContent.substring(0, (substrPos = originalContent.indexOf("@MakeConstructor")))
+                    + originalContent.substring(originalContent.indexOf("\n", substrPos));
+            String content = getEnclosedContent(originalContent);
+            String tabulation = "\t";
+            Element enclosing = element;
+            while (enclosing != null && !(enclosing instanceof PackageElement)) {
+                tabulation += "\t";
+                enclosing = enclosing.getEnclosingElement();
+            }
+            if (content == null) {
+                // Should not trigger but better safe then sorry
+                throw new Exception("Invalid file layout!");
+            }
+            String toWrite = "";
+            for (int i = 0; i < fieldMap.size(); i++) {
+                toWrite += tabulation + " public " + element.getSimpleName() + "(";
+                List<VariableElement> fieldsToConstruct = fieldMap.get(i);
+                String constructorBody = "{\n";
+                for (int j = 0; j < fieldsToConstruct.size(); j++) {
+                    VariableElement field = fieldsToConstruct.get(j);
+                    if (!field.getModifiers().contains(Modifier.STATIC)) {
+                        toWrite += field.asType().toString() + " " + field.getSimpleName();
+                        constructorBody += tabulation + "\tthis." + field.getSimpleName() + " = "
+                                + field.getSimpleName() + ";\n";
+                        if (j != fieldsToConstruct.size() - 1) {
+                            toWrite += ", ";
+                        }
+                    }
+                }
+                toWrite += ")" + constructorBody + tabulation + "}\n";
+            }
+            originalContent = originalContent.substring(0, originalContent.lastIndexOf("}")) + toWrite + "}";
+            try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
+                writer.println(originalContent);
+            } catch (IOException e) {
+                System.out.println("Unable to update class file");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
-    public static void loadSnippet(TypeElement element, String pathToClassFile){
+    private static String getEnclosedContent(String content) {
+        int startPos = content.indexOf("{");
+        int balance = 1;
+        if (startPos == -1) {
+            return null;
+        }
+        int curPos = startPos + 1;
+        while (balance > 0) {
+            int nextOpen = content.indexOf("{", curPos);
+            int nextClose = content.indexOf("}", curPos);
+            if (nextOpen == -1) {
+                curPos = nextClose;
+                balance--;
+            } else {
+                if (nextClose < nextOpen) {
+                    if (nextClose == -1) {
+                        return null;
+                    } else {
+                        curPos = nextClose;
+                        balance--;
+                    }
+                } else {
+                    curPos = nextOpen;
+                    balance++;
+                }
+            }
+        }
+        return content.substring(startPos, curPos + 1);
+    }
+
+    public static void loadSnippet(TypeElement element, String pathToClassFile) {
         String content;
         String classContent;
-        try{
-            content = new String(Files.readAllBytes(Paths.get(snippetPath + element.getAnnotation(Snippet.class).snippet() + "Snippet.txt")));
-        }catch(IOException e){
+        try {
+            content = readAllContent(snippetPath + element.getAnnotation(Snippet.class).snippet() + "Snippet.txt");
+        } catch (IOException e) {
             System.out.println("Unable to reach Snippet Record");
             return;
         }
         try {
-            classContent = new String(Files.readAllBytes(Paths.get(pathToClassFile)));
+            classContent = readAllContent(pathToClassFile);
         } catch (Exception e) {
             System.out.println("Unable to reach class code");
             return;
         }
-        String packageName = ((PackageElement)element.getEnclosingElement()).getQualifiedName().toString();
-        if(packageName == null || packageName.equals("")){
+        String packageName = ((PackageElement) element.getEnclosingElement()).getQualifiedName().toString();
+        if (packageName == null || packageName.equals("")) {
             content = content.replace("package {pkg};", "");
-        }else{
+        } else {
             content = content.replace("{pkg}", packageName);
         }
         String internal = getContent(classContent);
-        content = content.replaceAll("\\{internal\\}", internal).replaceAll("\\{class\\}", element.getSimpleName().toString());
+        content = content.replaceAll("\\{internal\\}", internal).replaceAll("\\{class\\}",
+                element.getSimpleName().toString());
         File classFile = new File(pathToClassFile);
         try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
             writer.println(content);
-        }catch(IOException e){
+        } catch (IOException e) {
             System.out.println("Unable to update class file");
             return;
         }
     }
 
-    private static String getContent(String content){
-        int startPos = content.indexOf("{")+1;
-        int endPos = content.lastIndexOf("}")-1;
+    private static Map<Integer, List<VariableElement>> getFieldMap(TypeElement element) {
+        Map<Integer, List<VariableElement>> fieldMap = new HashMap<>();
+        List<? extends Element> enclosed = element.getEnclosedElements();
+        List<VariableElement> allFields = new ArrayList<>();
+        for (Element e : enclosed) {
+            if (e.getKind() == ElementKind.FIELD) {
+                VariableElement fieldElement = (VariableElement) e;
+                allFields.add(fieldElement);
+                ToConstruct annot;
+                if ((annot = fieldElement.getAnnotation(ToConstruct.class)) != null) {
+                    int[] ids = annot.id();
+                    for (int id : ids) {
+                        if (fieldMap.containsKey(id)) {
+                            if (!fieldMap.get(id).contains(fieldElement)) {
+                                fieldMap.get(id).add(fieldElement);
+                            }
+                        } else {
+                            List<VariableElement> fieldList = new ArrayList<>();
+                            fieldList.add(fieldElement);
+                            fieldMap.put(id, fieldList);
+                        }
+                    }
+                }
+            }
+        }
+        if (fieldMap.isEmpty()) {
+            if (allFields.isEmpty()) {
+                return fieldMap;
+            }
+            fieldMap.put(0, allFields);
+        }
+        return fieldMap;
+    }
+
+    private static String getContent(String content) {
+        int startPos = content.indexOf("{") + 1;
+        int endPos = content.lastIndexOf("}") - 1;
         return content.substring(startPos, endPos);
     }
 
     public static void saveSnippet(TypeElement element, String pathToClassFile) {
         String snippetName;
-        if((snippetName = element.getAnnotation(Custom.class).name()).equals("-")){
+        if ((snippetName = element.getAnnotation(Custom.class).name()).equals("-")) {
             snippetName = element.getSimpleName().toString();
         }
         File snippetsFile = new File(snippetPath + snippetName + "Snippet.txt");
@@ -87,14 +214,16 @@ public class CustomSnippetManager {
             if (!snippetsFile.exists()) {
                 System.out.println("Snippet file created: " + snippetsFile.getAbsolutePath());
                 snippetsFile.createNewFile();
-            }else{
-                if(!element.getAnnotation(Custom.class).update()){
-                    System.out.println(snippetsFile.getAbsolutePath() + " already exists. Set @Custom(update = true) to update snippet on each build");
+            } else {
+                if (!element.getAnnotation(Custom.class).update()) {
+                    System.out.println(snippetsFile.getAbsolutePath()
+                            + " already exists. Set @Custom(update = true) to update snippet on each build");
                     return;
                 }
             }
-            String content = "package {pkg};\n" + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
-                    "\\{class\\}");
+            String content = "package {pkg};\n"
+                    + processClass(pathToClassFile).replaceAll(element.getSimpleName().toString(),
+                            "\\{class\\}");
             try (PrintWriter writer = new PrintWriter(new FileWriter(snippetsFile, false))) {
                 writer.println(content);
             }
@@ -115,27 +244,32 @@ public class CustomSnippetManager {
         writer.close();
     }
 
+    private static String readAllContent(String path) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(path)));
+    }
+
     private static void addOption(String className, File catalogueFile) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(cataloguePath)));
+        String content = readAllContent(cataloguePath);
         if (content.contains("String " + className)) {
             System.out.println(className + " is already in a catalogue.");
             return;
         }
-        content = content.replaceFirst("\t//Options\n", "\t//Options\n\t public final static String " + className + " = \""+ className + "\";\n");
+        content = content.replaceFirst("\t//Options\n",
+                "\t//Options\n\t public final static String " + className + " = \"" + className + "\";\n");
         try (PrintWriter writer = new PrintWriter(catalogueFile)) {
             writer.println(content);
         }
     }
 
     private static String processClass(String path) throws IOException {
-        String content = new String(Files.readAllBytes(Paths.get(path)));
+        String content = readAllContent(path);
         content = content.replaceAll("import com.example.annotations.field.CustomField;", "")
                 .replaceAll("import com.example.annotations.method.CustomMethod;", "")
                 .replaceAll("import com.example.annotations.type.Custom;", "")
                 .replaceAll("import com.example.annotations.type.CustomEnum;", "");
         String processed = "";
         int startPos = 0;
-        if(content.startsWith("package")){
+        if (content.startsWith("package")) {
             startPos = content.indexOf(";") + 1;
         }
         processed += content.substring(startPos, content.indexOf("@Custom"));
@@ -197,7 +331,8 @@ public class CustomSnippetManager {
             }
             extracted += content.substring(extractionStart, curPos + 1);
             content = content.replaceFirst("@Custom", "");
-            extracted = extracted.substring(0, extracted.indexOf("@Custom")) + extracted.substring(extracted.indexOf("\n"));
+            extracted = extracted.substring(0, extracted.indexOf("@Custom"))
+                    + extracted.substring(extracted.indexOf("\n"));
             processed += "\n" + extracted + "\n";
         }
         processed += "\n{internal}\n}";

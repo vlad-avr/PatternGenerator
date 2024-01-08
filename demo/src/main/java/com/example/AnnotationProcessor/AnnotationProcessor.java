@@ -31,34 +31,35 @@ import com.example.annotations.type.Builder;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
 import com.example.annotations.type.Factory;
+import com.example.annotations.type.MakeConstructor;
 import com.example.annotations.type.MakeInterface;
 import com.example.annotations.type.Singleton;
 import com.example.annotations.type.Snippet;
-import com.example.codeFactory.CustomSnippetManager;
+import com.example.codeFactory.CodeCustomiser;
 import com.example.codeFactory.PatternFactory;
 
 public class AnnotationProcessor extends AbstractProcessor {
 
-    // @Override
-    // public Set<String> getSupportedAnnotationTypes() {
-    //     Set<String> annotations = new HashSet<>();
-    //     annotations.add("com.example.annotations.type.Singleton");
-    //     annotations.add("com.example.annotations.type.Factory");
-    //     annotations.add("com.example.annotations.type.Decorator");
-    //     annotations.add("com.example.annotations.type.MakeInterface");
-    //     annotations.add("com.example.annotations.type.Custom");
-    //     annotations.add("com.example.annotations.type.Snippet");
-    //     annotations.add("com.example.annotations.type.Enum");
-    //     annotations.add("com.example.annotations.type.MakeConstructor");
-    //     annotations.add("com.example.annotations.method.ToOverride");
-    //     annotations.add("com.example.annotations.method.CustomMethod");
-    //     annotations.add("com.example.annotations.field.CustomField");
-    //     annotations.add("com.example.annotations.field.ToBuild");
-    //     annotations.add("com.example.annotations.field.ToConstruct");
-    //     annotations.add("com.example.annotations.constructor.CustomConstructor");
-    //     // Add more annotation types as needed
-    //     return annotations;
-    // }
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> annotations = new HashSet<>();
+        annotations.add("com.example.annotations.type.Singleton");
+        annotations.add("com.example.annotations.type.Factory");
+        annotations.add("com.example.annotations.type.Decorator");
+        annotations.add("com.example.annotations.type.MakeInterface");
+        annotations.add("com.example.annotations.type.Custom");
+        annotations.add("com.example.annotations.type.Snippet");
+        annotations.add("com.example.annotations.type.CustomEnum");
+        annotations.add("com.example.annotations.type.MakeConstructor");
+        annotations.add("com.example.annotations.method.ToOverride");
+        annotations.add("com.example.annotations.method.CustomMethod");
+        annotations.add("com.example.annotations.field.CustomField");
+        annotations.add("com.example.annotations.field.ToBuild");
+        annotations.add("com.example.annotations.field.ToConstruct");
+        annotations.add("com.example.annotations.constructor.CustomConstructor");
+        // Add more annotation types as needed
+        return annotations;
+    }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -77,6 +78,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @Decorator processed\n");
         processInterfaceMakers(roundEnv.getElementsAnnotatedWith(MakeInterface.class));
         System.out.println("\nAll elements with @MakeInterface processed\n");
+        processMakeConstructor(roundEnv.getElementsAnnotatedWith(MakeConstructor.class));
+        System.out.println("\nAll elements with @MakeConstructor processed\n");
         processBuilders(roundEnv.getElementsAnnotatedWith(Builder.class));
         System.out.println("\nAll elements with @Builder processed\n");
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
@@ -85,6 +88,33 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @Snippet processed\n");
 
         return true;
+    }
+
+    private void processMakeConstructor(Set<? extends Element> annotations){
+        for (Element element : annotations) {
+            System.out.println("Found class annotated with @MakeConstructor: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> cannot make Constructor");
+                    return;
+                }
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> cannot make Constructor");
+                    continue;
+                }
+                String path = getAbsolutePath(typeElement);
+                if(path != null){
+                    CodeCustomiser.makeConstructors(typeElement, path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
+                }
+            } else {
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
     }
 
     private void processBuilders(Set<? extends Element> annotations){
@@ -153,7 +183,9 @@ public class AnnotationProcessor extends AbstractProcessor {
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {
-                    CustomSnippetManager.loadSnippet(typeElement, path);
+                    CodeCustomiser.loadSnippet(typeElement, path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
                 }
             } else {
                 // Handle the case where the element is a package (or other non-class element)
@@ -187,7 +219,9 @@ public class AnnotationProcessor extends AbstractProcessor {
                 }
                 String path = getAbsolutePath(typeElement);
                 if (path != null) {
-                    CustomSnippetManager.saveSnippet(typeElement, path);
+                    CodeCustomiser.saveSnippet(typeElement, path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
                 }
             } else {
                 // Handle the case where the element is a package (or other non-class element)
@@ -361,14 +395,6 @@ public class AnnotationProcessor extends AbstractProcessor {
         Filer filer = processingEnv.getFiler();
 
         try {
-            // Get the package name
-            // String packageName = "";
-            // if (element.getEnclosingElement() instanceof PackageElement) {
-            //     packageName = ((PackageElement) element.getEnclosingElement()).getQualifiedName().toString();
-            // } else if (element.getEnclosingElement() instanceof TypeElement) {
-            //     packageName = ((TypeElement) element.getEnclosingElement()).getQualifiedName().toString();
-            // }
-
             // Construct the path to the source file
             Element enclosingElement = element;
             while (!(enclosingElement.getEnclosingElement() instanceof PackageElement)) {
@@ -376,12 +402,6 @@ public class AnnotationProcessor extends AbstractProcessor {
             }
             String packageName =  ((PackageElement)enclosingElement.getEnclosingElement()).getQualifiedName().toString();
             String sourceFilePath = packageName.replace('.', '/') + "/" + enclosingElement.getSimpleName() + ".java";
-            // if (element.getAnnotation(Custom.class).localClass()) {
-            //     sourceFilePath = packageName.replace('.', '/') + "/" + element.getSimpleName() + ".java";
-            // } else {
-            //     sourceFilePath = packageName.replace('.', '/') + "/" +
-            //             element.getEnclosingElement().getSimpleName() + ".java";
-            // }
 
             // Get the source file for the specified element
             FileObject fileObject = filer.getResource(StandardLocation.SOURCE_PATH, "", sourceFilePath);

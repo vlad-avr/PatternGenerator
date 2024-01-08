@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.FIELD)
 public @interface ToConstruct {
-    int[] id() default {};
+    int[] id() default {0};
 }

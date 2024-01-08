@@ -1,14 +1,16 @@
+com\example\annotations\type\MakeConstructor.class
 com\example\annotations\type\MakeInterface.class
 com\example\codeFactory\SnippetLoader.class
 com\example\codeFactory\SnippetLoader$1.class
 com\example\annotations\field\ToBuild.class
 com\example\codeFactory\PatternFactory.class
+com\example\annotations\field\ToConstruct.class
 com\example\annotations\method\CustomMethod.class
 com\example\annotations\constructor\CustomConstructor.class
 com\example\annotations\type\Singleton.class
+com\example\codeFactory\CodeCustomiser.class
 com\example\annotations\type\Factory.class
 com\example\annotationProcessor\AnnotationProcessor.class
-com\example\codeFactory\CustomSnippetManager.class
 com\example\annotations\field\CustomField.class
 com\example\annotations\type\Decorator.class
 com\example\annotations\type\CustomEnum.class
