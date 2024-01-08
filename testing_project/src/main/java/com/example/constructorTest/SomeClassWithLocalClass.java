@@ -5,6 +5,11 @@ import com.example.annotations.type.MakeConstructor;
 
 
 public class SomeClassWithLocalClass {
+	public SomeClassWithLocalClass(java.lang.String name, int age){
+		this.name = name;
+		this.age = age;
+	}
+
     private String name;
     private int age;
 
@@ -15,9 +20,5 @@ public class SomeClassWithLocalClass {
         @ToConstruct(id = {2})
         private int localAge;
     }
-
-	public SomeClassWithLocalClass(java.lang.String name, int age){
-		this.name = name;
-		this.age = age;
-	}
 }
+

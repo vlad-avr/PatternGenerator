@@ -37,19 +37,29 @@ public class CodeCustomiser {
         File classFile = new File(pathToClassFile);
         try {
             String originalContent = readAllContent(pathToClassFile);
-            int substrPos;
-            originalContent = originalContent.substring(0, (substrPos = originalContent.indexOf("@MakeConstructor")))
-                    + originalContent.substring(originalContent.indexOf("\n", substrPos));
-            String content = getEnclosedContent(originalContent);
+            int substrStart = 0;
+            int substrEnd;
+            String tmp;
+            do{
+                substrStart = originalContent.indexOf("@MakeConstructor", substrStart);
+                if(substrStart == -1){
+                    throw new Exception("Invalid code structure");
+                }
+                substrEnd = originalContent.indexOf("{", substrStart);
+                if(substrEnd == -1){
+                    throw new Exception("Invalid code structure");
+                }
+                tmp = originalContent.substring(substrStart, substrEnd + 1);
+            }while(!(tmp.contains("@MakeConstructor") && tmp.contains("class") && tmp.contains(element.getSimpleName())));
+            int cutLen;
+            originalContent = originalContent.substring(0, substrStart)
+                    + originalContent.substring((cutLen = originalContent.indexOf("\n", substrStart)));
+            cutLen -= substrStart;
             String tabulation = "";
             Element enclosing = element;
             while (enclosing != null && !(enclosing instanceof PackageElement)) {
                 tabulation += "\t";
                 enclosing = enclosing.getEnclosingElement();
-            }
-            if (content == null) {
-                // Should not trigger but better safe then sorry
-                throw new Exception("Invalid file layout!");
             }
             String toWrite = "\n";
             for (int i = 0; i < fieldMap.size(); i++) {
@@ -69,7 +79,7 @@ public class CodeCustomiser {
                 }
                 toWrite += ")" + constructorBody + tabulation + "}\n";
             }
-            originalContent = originalContent.substring(0, originalContent.lastIndexOf("}")) + toWrite + "}";
+            originalContent = originalContent.substring(0, substrEnd - cutLen + 1) + toWrite + originalContent.substring(substrEnd - cutLen + 1);
             try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
                 writer.println(originalContent);
             } catch (IOException e) {
@@ -77,7 +87,7 @@ public class CodeCustomiser {
                 return;
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("ERROR : " + e.getMessage());
         }
     }
 
