@@ -41,7 +41,7 @@ public class CodeCustomiser {
             originalContent = originalContent.substring(0, (substrPos = originalContent.indexOf("@MakeConstructor")))
                     + originalContent.substring(originalContent.indexOf("\n", substrPos));
             String content = getEnclosedContent(originalContent);
-            String tabulation = "\t";
+            String tabulation = "";
             Element enclosing = element;
             while (enclosing != null && !(enclosing instanceof PackageElement)) {
                 tabulation += "\t";
@@ -51,9 +51,9 @@ public class CodeCustomiser {
                 // Should not trigger but better safe then sorry
                 throw new Exception("Invalid file layout!");
             }
-            String toWrite = "";
+            String toWrite = "\n";
             for (int i = 0; i < fieldMap.size(); i++) {
-                toWrite += tabulation + " public " + element.getSimpleName() + "(";
+                toWrite += tabulation + "public " + element.getSimpleName() + "(";
                 List<VariableElement> fieldsToConstruct = fieldMap.get(i);
                 String constructorBody = "{\n";
                 for (int j = 0; j < fieldsToConstruct.size(); j++) {

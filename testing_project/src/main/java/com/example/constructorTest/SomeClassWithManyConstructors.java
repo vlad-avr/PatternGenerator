@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import com.example.annotations.field.ToConstruct;
 import com.example.annotations.type.MakeConstructor;
 
-@MakeConstructor
+
 public class SomeClassWithManyConstructors {
     @ToConstruct(id = {1,2})
     public int someNum;
@@ -17,4 +17,20 @@ public class SomeClassWithManyConstructors {
     public float lameFloat;
     @ToConstruct
     private LocalDate reallyLocalDate;
+
+	public SomeClassWithManyConstructors(java.time.LocalDate reallyLocalDate){
+		this.reallyLocalDate = reallyLocalDate;
+	}
+	public SomeClassWithManyConstructors(int someNum, int anotherNum){
+		this.someNum = someNum;
+		this.anotherNum = anotherNum;
+	}
+	public SomeClassWithManyConstructors(int someNum, double coolDouble){
+		this.someNum = someNum;
+		this.coolDouble = coolDouble;
+	}
+	public SomeClassWithManyConstructors(int anotherNum, float lameFloat){
+		this.anotherNum = anotherNum;
+		this.lameFloat = lameFloat;
+	}
 }
