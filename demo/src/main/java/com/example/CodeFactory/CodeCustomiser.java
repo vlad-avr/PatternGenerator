@@ -107,6 +107,7 @@ public class CodeCustomiser {
                     balance++;
                 }
             }
+            curPos++;
         }
         return content.substring(startPos, curPos + 1);
     }
