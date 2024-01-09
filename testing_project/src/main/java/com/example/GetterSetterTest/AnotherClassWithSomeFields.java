@@ -5,6 +5,10 @@ import java.time.LocalDate;
 import com.example.annotations.field.GetterSetter;
 
 public class AnotherClassWithSomeFields {
+
+
+
+
 	public java.time.LocalDate getVerySpecialDate(){
 		return this.verySpecialDate;
 	}
@@ -34,7 +38,38 @@ public class AnotherClassWithSomeFields {
     private LocalDate specialDate = LocalDate.of(10, 9, 2004);
     @GetterSetter
     private final LocalDate verySpecialDate = LocalDate.now();
+
+    /**
+     * InnerAnotherClassWithSomeFields
+     */
+    @GetterSetter
+    public class InnerClassWithSomeFields {
+		public int getField1(){
+			return this.field1;
+		}
+		public void setField1(int field1){
+			this.field1 = field1;
+		}
+		public int getFinalField(){
+			return this.finalField;
+		}
+		public int getField2(){
+			return this.field2;
+		}
+		public void setField2(int field2){
+			this.field2 = field2;
+		}
+
+        public int field1;
+        public final int finalField = 2;
+        public int field2;
+    }
 }
+
+
+
+
+
 
 
 

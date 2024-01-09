@@ -59,10 +59,14 @@ public class CodeCustomiser {
                 }
                 if (makeGetter || makeSetter) {
                     for (ExecutableElement method : methods) {
-                        if (method.getSimpleName().toString().equals("get" + field.getSimpleName())) {
+                        if (method.getSimpleName().toString()
+                                .equals("get" + field.getSimpleName().toString().substring(0, 1).toUpperCase()
+                                        + field.getSimpleName().toString().substring(1))) {
                             makeGetter = false;
                         }
-                        if (method.getSimpleName().toString().equals("set" + field.getSimpleName())) {
+                        if (method.getSimpleName().toString()
+                                .equals("set" + field.getSimpleName().toString().substring(0, 1).toUpperCase()
+                                        + field.getSimpleName().toString().substring(1))) {
                             makeSetter = false;
                         }
                     }

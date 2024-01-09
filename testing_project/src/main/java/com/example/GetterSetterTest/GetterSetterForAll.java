@@ -6,6 +6,7 @@ import com.example.annotations.field.GetterSetter;
 
 @GetterSetter
 public class GetterSetterForAll {
+
 	public int getNumToGetSet(){
 		return this.numToGetSet;
 	}
@@ -29,4 +30,5 @@ public class GetterSetterForAll {
     @GetterSetter(makeSetter = false)
     protected List<Integer> intList;
 }
+
 
