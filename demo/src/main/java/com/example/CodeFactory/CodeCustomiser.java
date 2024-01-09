@@ -39,21 +39,6 @@ public class CodeCustomiser {
         }
         try {
             String originalContent = readAllContent(pathToClassFile);
-            int substrStart = 0;
-            int substrEnd;
-            String tmp;
-            do {
-                substrStart = originalContent.indexOf("@GetterSetter", substrStart);
-                if (substrStart == -1) {
-                    throw new Exception("Invalid code structure");
-                }
-                substrEnd = originalContent.indexOf("{", substrStart);
-                if (substrEnd == -1) {
-                    throw new Exception("Invalid code structure");
-                }
-                tmp = originalContent.substring(substrStart, substrEnd + 1);
-            } while (!(tmp.contains("@GetterSetter") && tmp.contains("class")
-                    && tmp.contains(element.getSimpleName())));
             String tabulation = "";
             Element enclosing = element;
             while (enclosing != null && !(enclosing instanceof PackageElement)) {
@@ -62,6 +47,9 @@ public class CodeCustomiser {
             }
             String toWrite = "\n";
             for (VariableElement field : fields) {
+                if (field.getModifiers().contains(Modifier.STATIC)) {
+                    continue;
+                }
                 boolean makeGetter = true;
                 boolean makeSetter = true;
                 GetterSetter gsAnnot;
@@ -79,27 +67,34 @@ public class CodeCustomiser {
                         }
                     }
                 }
+                if (field.getModifiers().contains(Modifier.FINAL) && makeSetter) {
+                    makeSetter = false;
+                }
                 if (makeGetter) {
-                    toWrite += tabulation + "public " + field.asType().toString() + " get" + field.getSimpleName()
-                            + "(){\n" + tabulation + "\treturn this." + field.getSimpleName() + "\n" + tabulation
+                    toWrite += tabulation + "public " + field.asType().toString() + " get"
+                            + field.getSimpleName().toString().substring(0, 1).toUpperCase()
+                            + field.getSimpleName().toString().substring(1)
+                            + "(){\n" + tabulation + "\treturn this." + field.getSimpleName() + ";\n" + tabulation
                             + "}\n";
                 }
                 if (makeSetter) {
-                    toWrite += tabulation + "public void set" + field.getSimpleName()
+                    toWrite += tabulation + "public void set"
+                            + field.getSimpleName().toString().substring(0, 1).toUpperCase()
+                            + field.getSimpleName().toString().substring(1)
                             + "(" + field.asType().toString() + " " + field.getSimpleName() + "){\n" + tabulation
-                            + "\tthis." + field.getSimpleName() + " = " + field.getSimpleName() + "\n" + tabulation
+                            + "\tthis." + field.getSimpleName() + " = " + field.getSimpleName() + ";\n" + tabulation
                             + "}\n";
                 }
             }
             int pos = 0;
-            do{
+            do {
                 pos = originalContent.indexOf(element.getSimpleName().toString(), pos);
-            }while(pos != -1 && originalContent.charAt(pos - 1) != ' ');
-            if(pos == -1){
+            } while (pos != -1 && originalContent.charAt(pos - 1) != ' ');
+            if (pos == -1) {
                 throw new Exception("Unable to find place where to write new content");
             }
             pos = originalContent.indexOf("{", pos);
-            originalContent = originalContent.substring(0, pos) + toWrite + originalContent.substring(pos);
+            originalContent = originalContent.substring(0, pos + 1) + toWrite + originalContent.substring(pos + 1);
             try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
                 writer.println(originalContent);
             } catch (IOException e) {

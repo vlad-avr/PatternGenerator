@@ -25,6 +25,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
+import com.example.annotations.field.GetterSetter;
 import com.example.annotations.field.ToBuild;
 import com.example.annotations.method.ToOverride;
 import com.example.annotations.type.Builder;
@@ -80,6 +81,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @MakeInterface processed\n");
         processMakeConstructor(roundEnv.getElementsAnnotatedWith(MakeConstructor.class));
         System.out.println("\nAll elements with @MakeConstructor processed\n");
+        processGetterSetters(roundEnv.getElementsAnnotatedWith(GetterSetter.class));
+        System.out.println("\nAll elements with @GetterSetter processed\n");
         processBuilders(roundEnv.getElementsAnnotatedWith(Builder.class));
         System.out.println("\nAll elements with @Builder processed\n");
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
