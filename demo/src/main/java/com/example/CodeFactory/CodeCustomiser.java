@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Executable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,12 +15,14 @@ import java.util.Map;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.TypeMirror;
 
+import com.example.annotations.field.GetterSetter;
 import com.example.annotations.field.ToConstruct;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Snippet;
@@ -27,6 +30,91 @@ import com.example.annotations.type.Snippet;
 public class CodeCustomiser {
     private static final String snippetPath = "src/main/java/snippets/";
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
+
+    public static void makeGetterSetters(TypeElement element, List<VariableElement> fields,
+            List<ExecutableElement> methods, String pathToClassFile) {
+        File classFile = new File(pathToClassFile);
+        if (fields.isEmpty()) {
+            return;
+        }
+        try {
+            String originalContent = readAllContent(pathToClassFile);
+            int substrStart = 0;
+            int substrEnd;
+            String tmp;
+            do {
+                substrStart = originalContent.indexOf("@GetterSetter", substrStart);
+                if (substrStart == -1) {
+                    throw new Exception("Invalid code structure");
+                }
+                substrEnd = originalContent.indexOf("{", substrStart);
+                if (substrEnd == -1) {
+                    throw new Exception("Invalid code structure");
+                }
+                tmp = originalContent.substring(substrStart, substrEnd + 1);
+            } while (!(tmp.contains("@GetterSetter") && tmp.contains("class")
+                    && tmp.contains(element.getSimpleName())));
+            int cutLen;
+            originalContent = originalContent.substring(0, substrStart)
+                    + originalContent.substring((cutLen = originalContent.indexOf("\n", substrStart)));
+            cutLen -= substrStart;
+            String tabulation = "";
+            Element enclosing = element;
+            while (enclosing != null && !(enclosing instanceof PackageElement)) {
+                tabulation += "\t";
+                enclosing = enclosing.getEnclosingElement();
+            }
+            String toWrite = "\n";
+            for (VariableElement field : fields) {
+                boolean makeGetter = true;
+                boolean makeSetter = true;
+                GetterSetter gsAnnot;
+                if ((gsAnnot = field.getAnnotation(GetterSetter.class)) != null) {
+                    makeGetter = gsAnnot.makeGetter();
+                    makeSetter = gsAnnot.makeSetter();
+                }
+                if (makeGetter || makeSetter) {
+                    for (ExecutableElement method : methods) {
+                        if (method.getSimpleName().toString().equals("get" + field.getSimpleName())) {
+                            makeGetter = false;
+                        }
+                        if (method.getSimpleName().toString().equals("set" + field.getSimpleName())) {
+                            makeSetter = false;
+                        }
+                    }
+                }
+                if (makeGetter) {
+                    toWrite += tabulation + "public " + field.asType().toString() + " get" + field.getSimpleName()
+                            + "(){\n" + tabulation + "\treturn this." + field.getSimpleName() + "\n" + tabulation
+                            + "}\n";
+                }
+                if (makeSetter) {
+                    toWrite += tabulation + "public void set" + field.getSimpleName()
+                            + "(" + field.asType().toString() + " " + field.getSimpleName() + "){\n" + tabulation
+                            + "\tthis." + field.getSimpleName() + " = " + field.getSimpleName() + "\n" + tabulation
+                            + "}\n";
+                }
+            }
+            int pos = 0;
+            do{
+                pos = originalContent.indexOf(element.getSimpleName().toString(), pos);
+            }while(pos != -1 && originalContent.charAt(pos - 1) != ' ');
+            if(pos == -1){
+                throw new Exception("Unable to find place where to write new content");
+            }
+            pos = originalContent.indexOf("{", pos);
+            originalContent = originalContent.substring(0, pos) + toWrite + originalContent.substring(pos);
+            try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
+                writer.println(originalContent);
+            } catch (IOException e) {
+                System.out.println("Unable to update class file");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
 
     public static void makeConstructors(TypeElement element, String pathToClassFile) {
         Map<Integer, List<VariableElement>> fieldMap = getFieldMap(element);
@@ -40,17 +128,18 @@ public class CodeCustomiser {
             int substrStart = 0;
             int substrEnd;
             String tmp;
-            do{
+            do {
                 substrStart = originalContent.indexOf("@MakeConstructor", substrStart);
-                if(substrStart == -1){
+                if (substrStart == -1) {
                     throw new Exception("Invalid code structure");
                 }
                 substrEnd = originalContent.indexOf("{", substrStart);
-                if(substrEnd == -1){
+                if (substrEnd == -1) {
                     throw new Exception("Invalid code structure");
                 }
                 tmp = originalContent.substring(substrStart, substrEnd + 1);
-            }while(!(tmp.contains("@MakeConstructor") && tmp.contains("class") && tmp.contains(element.getSimpleName())));
+            } while (!(tmp.contains("@MakeConstructor") && tmp.contains("class")
+                    && tmp.contains(element.getSimpleName())));
             int cutLen;
             originalContent = originalContent.substring(0, substrStart)
                     + originalContent.substring((cutLen = originalContent.indexOf("\n", substrStart)));
@@ -79,7 +168,8 @@ public class CodeCustomiser {
                 }
                 toWrite += ")" + constructorBody + tabulation + "}\n";
             }
-            originalContent = originalContent.substring(0, substrEnd - cutLen + 1) + toWrite + originalContent.substring(substrEnd - cutLen + 1);
+            originalContent = originalContent.substring(0, substrEnd - cutLen + 1) + toWrite
+                    + originalContent.substring(substrEnd - cutLen + 1);
             try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
                 writer.println(originalContent);
             } catch (IOException e) {
