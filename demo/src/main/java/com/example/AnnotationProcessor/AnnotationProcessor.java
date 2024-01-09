@@ -90,6 +90,48 @@ public class AnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
+    private void processGetterSetters(Set<? extends Element> annotations){
+        for (Element element : annotations) {
+            System.out.println("Found element annotated with @GetterSetter: " + element);
+            if (element instanceof TypeElement) {
+                // If the element is a class
+                TypeElement typeElement = (TypeElement) element;
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> unable to process");
+                    return;
+                }
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> unable to process");
+                    continue;
+                }
+                String path = getAbsolutePath(typeElement);
+                if(path != null){
+                    CodeCustomiser.makeGetterSetters(typeElement, getFields(typeElement, null), getMethods(typeElement, null), path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
+                }
+            } else if (element instanceof VariableElement){
+                VariableElement fieldElement = (VariableElement)element;
+                List<VariableElement> singleElemList = new ArrayList<>();
+                singleElemList.add(fieldElement);
+                Element enclosingElem = element.getEnclosingElement();
+                while(!(enclosingElem instanceof TypeElement)){
+                    enclosingElem = enclosingElem.getEnclosingElement();
+                }
+                TypeElement typeElement = (TypeElement) enclosingElem;
+                String path = getAbsolutePath(typeElement);
+                if(path != null){
+                    CodeCustomiser.makeGetterSetters(typeElement, singleElemList, getMethods(typeElement, null), path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + typeElement);
+                }
+            } else{
+                // Handle the case where the element is a package (or other non-class element)
+                System.out.println("Element is not a class. Skipping.");
+            }
+        }
+    }
+
     private void processMakeConstructor(Set<? extends Element> annotations){
         for (Element element : annotations) {
             System.out.println("Found class annotated with @MakeConstructor: " + element);

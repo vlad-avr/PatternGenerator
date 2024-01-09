@@ -54,10 +54,6 @@ public class CodeCustomiser {
                 tmp = originalContent.substring(substrStart, substrEnd + 1);
             } while (!(tmp.contains("@GetterSetter") && tmp.contains("class")
                     && tmp.contains(element.getSimpleName())));
-            int cutLen;
-            originalContent = originalContent.substring(0, substrStart)
-                    + originalContent.substring((cutLen = originalContent.indexOf("\n", substrStart)));
-            cutLen -= substrStart;
             String tabulation = "";
             Element enclosing = element;
             while (enclosing != null && !(enclosing instanceof PackageElement)) {
