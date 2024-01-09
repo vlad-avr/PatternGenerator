@@ -39,8 +39,14 @@ import com.example.annotations.type.Snippet;
 import com.example.codeFactory.CodeCustomiser;
 import com.example.codeFactory.PatternFactory;
 
+/**Processor that processes annotations
+ * @author vlad-avr
+ */
 public class AnnotationProcessor extends AbstractProcessor {
-
+    /** Adds supported annotation types
+     * 
+     * @return  Set of fully qualified class names of supported annotations
+     */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> annotations = new HashSet<>();
@@ -63,6 +69,10 @@ public class AnnotationProcessor extends AbstractProcessor {
         return annotations;
     }
 
+    /**Initializer
+     * 
+     * @param processingEnv   Environment in which processing is happening
+     */
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);

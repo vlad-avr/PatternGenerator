@@ -488,7 +488,7 @@ public class PatternFactory {
             e.printStackTrace();
         }
     }
-    /**
+    /**Gets Package name of the class
      * 
      * @param packagePath   Path to Package
      * @param defaultPkg    Default package if no package is given
