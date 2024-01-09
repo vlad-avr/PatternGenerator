@@ -6,9 +6,6 @@ import com.example.annotations.field.GetterSetter;
 
 public class AnotherClassWithSomeFields {
 
-
-
-
 	public java.time.LocalDate getVerySpecialDate(){
 		return this.verySpecialDate;
 	}
