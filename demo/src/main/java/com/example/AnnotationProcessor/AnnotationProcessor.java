@@ -57,6 +57,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         annotations.add("com.example.annotations.field.CustomField");
         annotations.add("com.example.annotations.field.ToBuild");
         annotations.add("com.example.annotations.field.ToConstruct");
+        annotations.add("com.example.annotations.field.GetterSetter");
         annotations.add("com.example.annotations.constructor.CustomConstructor");
         // Add more annotation types as needed
         return annotations;
@@ -123,6 +124,10 @@ public class AnnotationProcessor extends AbstractProcessor {
                 }
                 TypeElement typeElement = (TypeElement) enclosingElem;
                 String path = getAbsolutePath(typeElement);
+                if(isAnnotationPresent(typeElement, GetterSetter.class)){
+                    System.out.println("Class is already annotated with @GetterSetter -> SKIPPED to avoid duplication");
+                    continue;
+                }
                 if(path != null){
                     CodeCustomiser.makeGetterSetters(typeElement, singleElemList, getMethods(typeElement, null), path);
                 }else{

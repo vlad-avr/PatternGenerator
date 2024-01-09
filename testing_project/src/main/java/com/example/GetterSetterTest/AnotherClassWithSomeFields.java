@@ -5,6 +5,25 @@ import java.time.LocalDate;
 import com.example.annotations.field.GetterSetter;
 
 public class AnotherClassWithSomeFields {
+	public java.time.LocalDate getVerySpecialDate(){
+		return this.verySpecialDate;
+	}
+
+	public java.time.LocalDate getSpecialDate(){
+		return this.specialDate;
+	}
+
+	public void setStr(java.lang.String str){
+		this.str = str;
+	}
+
+	public int getNum(){
+		return this.num;
+	}
+	public void setNum(int num){
+		this.num = num;
+	}
+
     @GetterSetter
     public int num;
     @GetterSetter(makeGetter = false)
@@ -16,3 +35,7 @@ public class AnotherClassWithSomeFields {
     @GetterSetter
     private final LocalDate verySpecialDate = LocalDate.now();
 }
+
+
+
+
