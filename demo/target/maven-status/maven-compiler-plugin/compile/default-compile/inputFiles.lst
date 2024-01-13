@@ -10,6 +10,7 @@ D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\field\Getter
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\field\CustomField.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\codeFactory\SnippetLoader.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\CustomEnum.java
+D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\ToString.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\type\Factory.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotationProcessor\AnnotationProcessor.java
 D:\Java\PatternGenerator\demo\src\main\java\com\example\annotations\method\CustomMethod.java

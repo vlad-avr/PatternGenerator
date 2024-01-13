@@ -8,9 +8,11 @@ import java.util.List;
 
 
 
+import com.example.annotations.type.ToString;
 
 import java.lang.String;
 
+@ToString
 
 
 public class {class} {

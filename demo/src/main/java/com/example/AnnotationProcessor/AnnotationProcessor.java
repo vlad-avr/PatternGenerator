@@ -36,6 +36,7 @@ import com.example.annotations.type.MakeConstructor;
 import com.example.annotations.type.MakeInterface;
 import com.example.annotations.type.Singleton;
 import com.example.annotations.type.Snippet;
+import com.example.annotations.type.ToString;
 import com.example.codeFactory.CodeCustomiser;
 import com.example.codeFactory.PatternFactory;
 
@@ -86,6 +87,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @MakeConstructor processed\n");
         processGetterSetters(roundEnv.getElementsAnnotatedWith(GetterSetter.class));
         System.out.println("\nAll elements with @GetterSetter processed\n");
+        processToString(roundEnv.getElementsAnnotatedWith(ToString.class));
+        System.out.println("\nAll elements with @ToString processed\n");
         processBuilders(roundEnv.getElementsAnnotatedWith(Builder.class));
         System.out.println("\nAll elements with @Builder processed\n");
         processCustom(roundEnv.getElementsAnnotatedWith(Custom.class));
@@ -94,6 +97,40 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @Snippet processed\n");
 
         return true;
+    }
+
+    /**Processes elements annoatated with @ToString
+     * 
+     * @param elements Elements annotated with @ToString
+     */
+    private void processToString(Set<? extends Element> elements){
+        //For each annotated element
+        for (Element element : elements) {
+            System.out.println("Found element annotated with @ToString: " + element);
+            //Check the type of the element
+            if (element instanceof TypeElement) {
+                // If the element is a TypeElement
+                TypeElement typeElement = (TypeElement) element;
+                 //Skip if element is an interface
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> unable to process");
+                    continue;
+                }
+                //Skip if element is an Enum
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> unable to process");
+                    continue;
+                }
+                //Get path to class file
+                String path = getAbsolutePath(typeElement);
+                if(path != null){
+                    //Generate ToString method
+                    CodeCustomiser.makeToString(typeElement, getFields(typeElement, null), getMethods(typeElement, null), path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
+                }
+            }
+        }
     }
 
     /**Processes elements annotated with @GetterSetter

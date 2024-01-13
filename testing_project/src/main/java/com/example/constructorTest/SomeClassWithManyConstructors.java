@@ -4,9 +4,13 @@ import java.time.LocalDate;
 
 import com.example.annotations.field.ToConstruct;
 import com.example.annotations.type.MakeConstructor;
+import com.example.annotations.type.ToString;
 
-
+@ToString
 public class SomeClassWithManyConstructors {
+	public String toString(){
+		return "[someNum : " + this.someNum + "\nanotherNum : " + this.anotherNum + "\ncoolDouble : " + this.coolDouble + "\nlameFloat : " + this.lameFloat + "\nreallyLocalDate : " + this.reallyLocalDate + "]";
+	}
 	public SomeClassWithManyConstructors(java.time.LocalDate reallyLocalDate){
 		this.reallyLocalDate = reallyLocalDate;
 	}
@@ -34,4 +38,5 @@ public class SomeClassWithManyConstructors {
     @ToConstruct
     private LocalDate reallyLocalDate;
 }
+
 

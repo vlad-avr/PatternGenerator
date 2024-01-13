@@ -34,7 +34,79 @@ public class CodeCustomiser {
     //Path to generated java file with snippets catalogue
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
 
-    /**Generated getter and/or setter functions for selected fields of the class
+    /**Generates ToString function for the class
+     * 
+     * @param element           Class for which method is generated
+     * @param fields            List of fields of this class
+     * @param pathToClassFile   Path to class file
+     */
+    public static void makeToString(TypeElement element, List<VariableElement> fields, List<ExecutableElement> methods, String pathToClassFile){
+        //Create File instance
+        File classFile = new File(pathToClassFile);
+        //Check if there is no fields to make getters setters for
+        if (fields.isEmpty()) {
+            return;
+        }
+        try {
+            //Check if toString method already exists
+            for(ExecutableElement method : methods){
+                if(method.getSimpleName().toString().equals("toString")){
+                    return;
+                }
+            }
+            //Read contents of the class file
+            String originalContent = readAllContent(pathToClassFile);
+            //Manage tabulation
+            String tabulation = "";
+            Element enclosing = element;
+            //For each enclosing element add 1 layer of tabulation
+            while (enclosing != null && !(enclosing instanceof PackageElement)) {
+                tabulation += "\t";
+                enclosing = enclosing.getEnclosingElement();
+            }
+            //Create String with ToString method
+            String toWrite = "\n" + tabulation + "public String toString(){\n" + tabulation + "\treturn \"[";
+            //Iterate through fields
+            for (int i = 0; i < fields.size(); i++) {
+                VariableElement field = fields.get(i);
+                //If marked field is Static -> skip it
+                if (field.getModifiers().contains(Modifier.STATIC)) {
+                    continue;
+                }
+                //Build toString return value
+                toWrite += field.getSimpleName() + " : \" + " + "this." + field.getSimpleName();
+                if(i != fields.size()-1){
+                    toWrite += " + \"\\n";
+                } 
+            }
+            toWrite += " + \"]\";" + "\n" + tabulation + "}";
+            //Look for place in file original content to insert new method
+            int pos = 0;
+            do {
+                pos = originalContent.indexOf(element.getSimpleName().toString(), pos);
+            } while (pos != -1 && originalContent.charAt(pos - 1) != ' ');
+            if (pos == -1) {
+                //No suitable place was found
+                throw new Exception("Unable to find place where to write new content");
+            }
+            //Look for the opening semicolumn of the class
+            pos = originalContent.indexOf("{", pos);
+            //Insert new methods right after it
+            originalContent = originalContent.substring(0, pos + 1) + toWrite + originalContent.substring(pos + 1);
+            //Update the contents of existing file
+            try (PrintWriter writer = new PrintWriter(new FileWriter(classFile, false))) {
+                writer.println(originalContent);
+            } catch (IOException e) {
+                System.out.println("Unable to update class file");
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    /**Generates getter and/or setter functions for selected fields of the class
      * 
      * @param element           Parent class of the fields
      * @param fields            Marked fields of the class
@@ -115,6 +187,10 @@ public class CodeCustomiser {
                             + "\tthis." + field.getSimpleName() + " = " + field.getSimpleName() + ";\n" + tabulation
                             + "}\n";
                 }
+            }
+            //If there is nothing to write -> don't write just return
+            if(toWrite.equals("\n")){
+                return;
             }
             //Look for place in file original content to insert new methods
             int pos = 0;

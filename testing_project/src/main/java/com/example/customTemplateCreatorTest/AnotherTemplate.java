@@ -7,11 +7,16 @@ import com.example.annotations.field.CustomField;
 import com.example.annotations.method.CustomMethod;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.CustomEnum;
+import com.example.annotations.type.ToString;
 
 import java.lang.String;
 
+@ToString
 @Custom(update = true, name = "TestTemplate")
 public class AnotherTemplate {
+	public String toString(){
+		return "[brainCells : " + this.brainCells + "\nstringList : " + this.stringList + "\nunimportantField : " + this.unimportantField + "]";
+	}
     @CustomField
     private int brainCells = 2;
     @CustomField
@@ -62,3 +67,4 @@ public class AnotherTemplate {
     }
 
 }
+

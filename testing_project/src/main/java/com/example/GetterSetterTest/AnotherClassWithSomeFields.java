@@ -3,8 +3,13 @@ package com.example.GetterSetterTest;
 import java.time.LocalDate;
 
 import com.example.annotations.field.GetterSetter;
+import com.example.annotations.type.ToString;
 
+@ToString
 public class AnotherClassWithSomeFields {
+	public String toString(){
+		return "[num : " + this.num + "\nstr : " + this.str + "\njustDate : " + this.justDate + "\nspecialDate : " + this.specialDate + "\nverySpecialDate : " + this.verySpecialDate + "]";
+	}
 
 	public java.time.LocalDate getVerySpecialDate(){
 		return this.verySpecialDate;
@@ -62,6 +67,7 @@ public class AnotherClassWithSomeFields {
         public int field2;
     }
 }
+
 
 
 
