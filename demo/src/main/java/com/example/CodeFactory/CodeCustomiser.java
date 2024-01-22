@@ -40,10 +40,10 @@ public class CodeCustomiser {
     /**
      * Generates equals function for the class
      * 
-     * @param element           class to generate equals for
-     * @param fields            fields of this class
-     * @param methods           methods of this class
-     * @param pathToClassFile   path to class file
+     * @param element         class to generate equals for
+     * @param fields          fields of this class
+     * @param methods         methods of this class
+     * @param pathToClassFile path to class file
      */
     public static void makeEquals(TypeElement element, List<VariableElement> fields, List<ExecutableElement> methods,
             String pathToClassFile) {
@@ -66,21 +66,24 @@ public class CodeCustomiser {
                 tabulation += "\t";
                 enclosing = enclosing.getEnclosingElement();
             }
-            //Build contnent for new method
+            // Build contnent for new method
             String toWrite = "\n" + tabulation + "public boolean equals(Object o){\n" + tabulation
-                    + "\tif (this == o) return true;\n" + "\tif (o == null) return false;\n" + tabulation
+                    + "\tif (this == o) return true;\n" + tabulation + "\tif (o == null) return false;\n" + tabulation
                     + "\tif (getClass() != o.getClass()) return false;\n" + tabulation
-                    + "\t" + element.getSimpleName() + " other = (" + element.getSimpleName() + ")o;\n" + tabulation + "\treturn";
-            //Add equals statement for each field
-            for(int i = 0; i < fields.size(); i++){
+                    + "\t" + element.getSimpleName() + " other = (" + element.getSimpleName() + ")o;\n" + tabulation
+                    + "\treturn";
+            // Add equals statement for each field
+            for (int i = 0; i < fields.size(); i++) {
                 VariableElement field = fields.get(i);
-                toWrite += "Objects.equals(" + "this." + field.getSimpleName() + ", other." + field.getSimpleName() + ")";
-                if(i < fields.size()-1){
+                toWrite += " java.util.Objects.equals(" + "this." + field.getSimpleName() + ", other." + field.getSimpleName()
+                        + ")";
+                if (i < fields.size() - 1) {
                     toWrite += " && \n" + tabulation + "\t\t";
-                }else{
-                    toWrite += ";";
+                } else {
+                    toWrite += ";\n";
                 }
             }
+            toWrite += tabulation + "}";
             // Look for place in file original content to insert new method
             int pos = 0;
             do {

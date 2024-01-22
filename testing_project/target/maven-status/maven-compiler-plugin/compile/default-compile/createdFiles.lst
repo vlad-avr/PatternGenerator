@@ -1,13 +1,11 @@
 com\example\FactoryTest\Builder.class
 pattern\interfaces\BuilderInterface.class
-cock\balls\torture\ObjectFactory$Option.class
 com\example\customTemplateCreatorTest\AnotherTemplate$InnerClass.class
 com\example\customTemplateCreatorTest\DummyClass.class
 com\example\GetterSetterTest\AnotherClassWithSomeFields$InnerClassWithSomeFields.class
 com\example\FactoryTest\Worker.class
 pattern\builders\HouseBuilderInterface.class
 com\example\BuilderTest\House.class
-cock\balls\torture\ObjectFactory$1.class
 com\example\FactoryTest\Cat.class
 com\example\customTemplateCreatorTest\AnotherTemplate.class
 com\example\customTemplateCreatorTest\DummyClassWithStuff$LameEnum.class
@@ -38,7 +36,6 @@ com\example\customTemplateCreatorTest\AnotherTemplate$CoolEnum.class
 com\example\customTemplateCreatorTest\DummyClass$InnerClass.class
 com\example\customTemplateCreatorTest\DummyClass$LameEnum.class
 com\example\customTemplateCreatorTest\DummyClass$CoolEnum.class
-cock\balls\torture\ObjectFactory.class
 pattern\singleton\D2Singleton.class
 com\example\GetterSetterTest\AnotherClassWithSomeFields.class
 com\example\constructorTest\SomeClassWithManyConstructors.class

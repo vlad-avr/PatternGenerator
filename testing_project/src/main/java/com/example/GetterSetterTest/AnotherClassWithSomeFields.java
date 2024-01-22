@@ -9,6 +9,17 @@ import com.example.annotations.type.ToString;
 @ToString
 @Equals
 public class AnotherClassWithSomeFields {
+	public boolean equals(Object o){
+		if (this == o) return true;
+		if (o == null) return false;
+		if (getClass() != o.getClass()) return false;
+		AnotherClassWithSomeFields other = (AnotherClassWithSomeFields)o;
+		return java.util.Objects.equals(this.num, other.num) && 
+			 java.util.Objects.equals(this.str, other.str) && 
+			 java.util.Objects.equals(this.justDate, other.justDate) && 
+			 java.util.Objects.equals(this.specialDate, other.specialDate) && 
+			 java.util.Objects.equals(this.verySpecialDate, other.verySpecialDate);
+	}
 	public String toString(){
 		return "[num : " + this.num + "\nstr : " + this.str + "\njustDate : " + this.justDate + "\nspecialDate : " + this.specialDate + "\nverySpecialDate : " + this.verySpecialDate + "]";
 	}
@@ -49,6 +60,15 @@ public class AnotherClassWithSomeFields {
     @GetterSetter
 	@Equals
     public class InnerClassWithSomeFields {
+		public boolean equals(Object o){
+			if (this == o) return true;
+			if (o == null) return false;
+			if (getClass() != o.getClass()) return false;
+			InnerClassWithSomeFields other = (InnerClassWithSomeFields)o;
+			return java.util.Objects.equals(this.field1, other.field1) && 
+				 java.util.Objects.equals(this.finalField, other.finalField) && 
+				 java.util.Objects.equals(this.field2, other.field2);
+		}
 		public int getField1(){
 			return this.field1;
 		}
@@ -70,6 +90,8 @@ public class AnotherClassWithSomeFields {
         public int field2;
     }
 }
+
+
 
 
 
