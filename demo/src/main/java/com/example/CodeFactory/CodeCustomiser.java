@@ -72,18 +72,23 @@ public class CodeCustomiser {
                     + "\tif (getClass() != o.getClass()) return false;\n" + tabulation
                     + "\t" + element.getSimpleName() + " other = (" + element.getSimpleName() + ")o;\n" + tabulation
                     + "\treturn";
+            boolean isFirst = true;
             // Add equals statement for each field
             for (int i = 0; i < fields.size(); i++) {
                 VariableElement field = fields.get(i);
+                // If field is Static -> skip it
+                if (field.getModifiers().contains(Modifier.STATIC)) {
+                    continue;
+                }
+                if(!isFirst){
+                    toWrite += "\n" + tabulation + "\t\t&&";
+                }else{
+                    isFirst = false;
+                }
                 toWrite += " java.util.Objects.equals(" + "this." + field.getSimpleName() + ", other." + field.getSimpleName()
                         + ")";
-                if (i < fields.size() - 1) {
-                    toWrite += " && \n" + tabulation + "\t\t";
-                } else {
-                    toWrite += ";\n";
-                }
             }
-            toWrite += tabulation + "}";
+            toWrite += ";\n" + tabulation + "}";
             // Look for place in file original content to insert new method
             int pos = 0;
             do {
