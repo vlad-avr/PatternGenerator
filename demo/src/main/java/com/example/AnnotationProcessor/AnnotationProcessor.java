@@ -31,6 +31,7 @@ import com.example.annotations.method.ToOverride;
 import com.example.annotations.type.Builder;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Decorator;
+import com.example.annotations.type.Equals;
 import com.example.annotations.type.Factory;
 import com.example.annotations.type.MakeConstructor;
 import com.example.annotations.type.MakeInterface;
@@ -56,6 +57,7 @@ public class AnnotationProcessor extends AbstractProcessor {
         annotations.add("com.example.annotations.type.Snippet");
         annotations.add("com.example.annotations.type.CustomEnum");
         annotations.add("com.example.annotations.type.MakeConstructor");
+        annotations.add("com.example.annotations.type.Equals");
         annotations.add("com.example.annotations.method.ToOverride");
         annotations.add("com.example.annotations.method.CustomMethod");
         annotations.add("com.example.annotations.field.CustomField");
@@ -87,6 +89,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @MakeConstructor processed\n");
         processGetterSetters(roundEnv.getElementsAnnotatedWith(GetterSetter.class));
         System.out.println("\nAll elements with @GetterSetter processed\n");
+        processEquals(roundEnv.getElementsAnnotatedWith(Equals.class));
+        System.out.println("\nAll elements with @Equals processed\n");
         processToString(roundEnv.getElementsAnnotatedWith(ToString.class));
         System.out.println("\nAll elements with @ToString processed\n");
         processBuilders(roundEnv.getElementsAnnotatedWith(Builder.class));
@@ -97,6 +101,39 @@ public class AnnotationProcessor extends AbstractProcessor {
         System.out.println("\nAll elements with @Snippet processed\n");
 
         return true;
+    }
+    /**Processes elements annoatated with @Equals
+     * 
+     * @param elements Elements annotated with @Equals
+     */
+    private void processEquals(Set<? extends Element> elements){
+        //For each annotated element
+        for (Element element : elements) {
+            System.out.println("Found element annotated with @Equals: " + element);
+            //Check the type of the element
+            if (element instanceof TypeElement) {
+                // If the element is a TypeElement
+                TypeElement typeElement = (TypeElement) element;
+                 //Skip if element is an interface
+                if (element.getKind().isInterface()) {
+                    System.out.println(element + " is an Interface -> unable to process");
+                    continue;
+                }
+                //Skip if element is an Enum
+                if (element.getKind() == ElementKind.ENUM) {
+                    System.out.println(element + " is an Enum -> unable to process");
+                    continue;
+                }
+                //Get path to class file
+                String path = getAbsolutePath(typeElement);
+                if(path != null){
+                    //Generate equals method
+                    CodeCustomiser.makeEquals(typeElement, getFields(typeElement, null), getMethods(typeElement, null), path);
+                }else{
+                    System.out.println("Unable to acquire path to the .java file for " + element);
+                }
+            }
+        }
     }
 
     /**Processes elements annoatated with @ToString

@@ -3,9 +3,11 @@ package com.example.GetterSetterTest;
 import java.time.LocalDate;
 
 import com.example.annotations.field.GetterSetter;
+import com.example.annotations.type.Equals;
 import com.example.annotations.type.ToString;
 
 @ToString
+@Equals
 public class AnotherClassWithSomeFields {
 	public String toString(){
 		return "[num : " + this.num + "\nstr : " + this.str + "\njustDate : " + this.justDate + "\nspecialDate : " + this.specialDate + "\nverySpecialDate : " + this.verySpecialDate + "]";
@@ -45,6 +47,7 @@ public class AnotherClassWithSomeFields {
      * InnerAnotherClassWithSomeFields
      */
     @GetterSetter
+	@Equals
     public class InnerClassWithSomeFields {
 		public int getField1(){
 			return this.field1;

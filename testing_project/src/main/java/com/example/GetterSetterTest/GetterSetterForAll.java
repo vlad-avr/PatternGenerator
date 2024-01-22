@@ -3,10 +3,12 @@ package com.example.GetterSetterTest;
 import java.util.List;
 
 import com.example.annotations.field.GetterSetter;
+import com.example.annotations.type.Equals;
 import com.example.annotations.type.ToString;
 
 @ToString
 @GetterSetter
+@Equals
 public class GetterSetterForAll {
 	public String toString(){
 		return "[numToGetSet : " + this.numToGetSet + "\nstringToSet : " + this.stringToSet + "\nfinalDouble : " + this.finalDouble + "\nintList : " + this.intList + "]";
