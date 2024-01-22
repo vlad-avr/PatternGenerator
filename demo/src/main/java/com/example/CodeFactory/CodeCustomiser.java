@@ -25,7 +25,7 @@ import com.example.annotations.field.ToConstruct;
 import com.example.annotations.type.Custom;
 import com.example.annotations.type.Snippet;
 
-/**Manages existing class files updates and saves custom code snippet adding them to snippet catalogue
+/**Manages existing class files, updates and saves custom code snippet adding them to snippet catalogue
  * @author vlad-avr
  */
 public class CodeCustomiser {
@@ -33,6 +33,10 @@ public class CodeCustomiser {
     private static final String snippetPath = "src/main/java/snippets/";
     //Path to generated java file with snippets catalogue
     private static final String cataloguePath = "src/main/java/snippets/Catalogue.java";
+
+    public static void makeEquals(TypeElement element, List<VariableElement> fields, String pathToClassFile){
+        
+    }
 
     /**Generates ToString function for the class
      * 
